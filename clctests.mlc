@@ -1,0 +1,27 @@
+         PRINT NOGEN
+         START 0
+         EQUREGS
+BEGIN    SUBENTRY
+         WTO   'CLC instruction tests'
+         CLC   NAME1,NAME1
+         BL    LESSTHAN
+         BH    GT
+EQUAL    EQU   *
+         WTO   'EQUAL'
+         B     END
+LESSTHAN EQU   *
+         WTO   'LESS THAN'
+         B     END
+GT       EQU   *
+         WTO   'GREATER THAN'
+END      EQU   *
+         RETURN
+         LTORG
+NAME1    DC    C'CHERYL  '
+NAME2    DC    C'APRIL   '
+         DS    0H            * INSURE HALF-WORD ALIGNMENT
+WTOBLOCK EQU   *
+         DC    H'80'         * For WTO, length of WTO buffer...
+         DC    H'0'            should be binary zeroes...
+WTOTEXT  DC    CL76' '
+         END   BEGIN

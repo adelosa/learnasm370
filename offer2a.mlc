@@ -1,0 +1,71 @@
+         PRINT NOGEN
+****************************************************************
+* FILENAME: OFFER2A.MLC *
+* AUTHOR : *
+* SYSTEM : PC/370 R4.2 *
+* REMARKS : A quick-and-dirty list of offerings. *
+****************************************************************
+         START 0
+         EQUREGS
+BEGIN    SUBENTRY
+         OPEN  (OFFER,INPUT)
+         OPEN  (REPORT,OUTPUT)
+LOOP     GET   OFFER
+         MVC   OF3,F3
+         MVC   OF4,F4
+         MVC   OF5,F5
+         MVC   OF1,F1
+         MVC   OF2,F2
+         MVC   OF7,F7
+         MVC   OF6,F6
+         PUT   REPORT,OREC
+         B     LOOP
+ATEND    CLOSE OFFER
+         CLOSE REPORT
+         RETURN
+         
+         LTORG
+*        OFFER.DAT
+OFFER    DCB   LRECL=16,RECFM=FT,MACRF=R,EODAD=ATEND,                  X
+               DDNAME=OFFER,RECORD=IREC
+*        OFFER.TXT
+REPORT   DCB   LRECL=33,RECFM=FT,MACRF=W,                              X
+               DDNAME=REPORT
+*
+*  OUTPUT RECORD
+* 
+* F92PE1511574GYM 
+* PE-151-1   F*1992   GYM    574 **
+* W93EG1021854A1 
+* EG-102-1   W*1993   A1     854 ** 
+IREC     DS    0CL16
+F1       DS    CL1   F     W
+F2       DS    CL2   92    93
+F3       DS    CL2   PE    EG
+F4       DS    CL3   151   102
+F5       DS    CL1   1     1
+F6       DS    CL3   574   854
+F7       DS    CL3   GYM   A1
+*
+*  OUTPUT RECORD
+* 
+* EG-102-1   W*1992   A1     732 **
+* MA-107-1   W*1992   A2     218 **
+* 123456789!123456789!123456789!123
+* PE-151-1   W*1993   GYM    5746**
+OREC     DC    0CL31
+OF3      DS    CL2' '    1-2
+         DC    CL1'-'    3
+OF4      DS    CL3' '    4-6
+         DC    CL1'-'    7 
+OF5      DS    CL1' '    8
+         DC    CL3' '    9-11
+OF1      DC    CL1' '    12
+         DC    CL3'*19'  13-15
+OF2      DC    CL2' '    16-17
+         DC    CL3' '    18-20
+OF7      DC    CL3' '    21-23
+         DC    CL4' '    24-27
+OF6      DC    CL3' '    28-30
+         DC    CL3' **'  31-33
+         END   BEGIN

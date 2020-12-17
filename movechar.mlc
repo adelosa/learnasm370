@@ -1,0 +1,21 @@
+         PRINT NOGEN
+         START 0
+         REGS
+BEGIN    SUBENTRY
+         WTO   'Move some chars'
+         MVC   WTOTEXT(76),=CL76'HELLO'
+         WTO   MF=(E,WTOBLOCK)
+         MVC   FLDC,FLDB
+         MVC   WTOTEXT(76),FLDA
+         WTO   MF=(E,WTOBLOCK)
+         RETURN
+         LTORG
+FLDA     DC    CL5'ABCDE'
+FLDB     DC    CL3'FGH'
+FLDC     DC    CL4'IJKL'
+         DS    0H            * INSURE HALF-WORD ALIGNMENT
+WTOBLOCK EQU   *
+         DC    H'80'         * For WTO, length of WTO buffer...
+         DC    H'0'                     should be binary zeroes...
+WTOTEXT  DC    CL76'* ASMWTOA1 WTO with user-coded buffer...'         
+         END   BEGIN

@@ -1,0 +1,47 @@
+         PRINT NOGEN
+****************************************************************
+* FILENAME: HELLO.MLC                                          *
+* AUTHOR : Bill Qualls/hoganman                                *
+* SYSTEM : z390                                                *
+* REMARKS : This program will display a message.               *
+****************************************************************
+         START 0
+         EQUREGS
+BEGIN    SUBENTRY
+         WTO   'Chapter 3 exercise 4B'
+*        IF NASTATE = 'UT' GOTO SETYES
+         CLC   NASTATE,=CL2'UT'
+         BE    SETYES
+*        IF NASTATE = 'CA' GOTO SETYES
+         CLC   NASTATE,=CL2'CA'
+         BE    SETYES
+*        MOVE 'N' TO WSWITCH
+         MVI   WSWITCH,C'N'
+*        GOTO  END
+         B     END
+*SETYES  MOVE 'Y' TO WSWITCH
+SETYES   MVI   WSWITCH,C'Y'   
+*END
+END      EQU   *
+         MVC   WTOTEXT(1),WSWITCH
+         WTO   MF=(E,WTOBLOCK)
+         SUBEXIT
+         LTORG
+*
+*        WTO block
+*
+WTOBLOCK EQU   *
+         DC    H'80'         * For WTO, length of WTO buffer...
+         DC    H'0'                     should be binary zeroes...
+WTOTEXT  DC    CL76' ' 
+
+NACITY   DS    CL12     56-67 CITY
+NASTATE  DC    CL2'CA'      68-69 STATE
+NAPHONE  DS    0CL10    70-79 PHONE...
+NAAREA   DS    CL3      70-72 ...AREA CODE
+NAEXCH   DS    CL3      73-75 ...EXCHANGE
+NALINE   DS    CL4      76-79 ...LINE
+NACODE   DS    CL1      80-80 TRANS CODE (A/C/D)
+WSWITCH  DS    CL1      (Y)ES OR (N)O
+
+         END   BEGIN

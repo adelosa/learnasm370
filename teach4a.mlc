@@ -1,0 +1,116 @@
+         PRINT NOGEN
+         DCBD
+         EQUREGS
+         DECBD
+         START 0
+BEGIN    SUBENTRY
+         WTO   'TEACH4A.... Begin execution'
+         BAL   R10,SETUP
+MAIN     EQU   *
+         BAL   R10,PROCESS
+         B     MAIN
+ATEND    EQU   *
+         BAL   R10,WRAPUP
+         WTO   'TEACH4A ... Normal end of program'
+         SUBEXIT
+         RETURN
+*
+*        SETUP
+*
+SETUP    EQU   *
+         OPEN  (TEACHERS,INPUT)
+         OPEN  (REPORT,OUTPUT)
+         MVC   WTOTEXT(76),BLANK
+         PUT   REPORT,HD1
+         PUT   REPORT,HD2
+         PUT   REPORT,HD3
+         PUT   REPORT,HD4
+         BR    R10
+*
+*        PROCESS
+*
+PROCESS  EQU   *
+         GET   TEACHERS
+         CLI   ITTEN,C'Y'        If Not Tenured?
+         BNE   PROCESSX          No, skip record
+         MVC   OTID,ITID         Move teacher ID Nbr to output
+         MVC   OTNAME,ITNAME     Move teacher Name to output
+         CLC   ITDEG,=CL4'PHD'   If PHD?
+         BE    YESPHD            ..
+         MVI   OPHD,C'N'         ..
+         B     OTHER
+YESPHD   EQU   *
+         MVI   OPHD,C'Y'         ..
+OTHER    EQU   *
+         MVC   OTPHONE+4,ITPHONE   Move phone nbr to output
+         MVI   OTPHONE+3,HYPHEN
+         MVC   OTPHONE(3),=C'517'
+         PUT   REPORT,OREC
+         MVC   WTOTEXT(60),OREC
+         WTO   MF=(E,WTOBLOCK)
+PROCESSX EQU   *
+         BR    R10
+*
+*        AT END
+*
+WRAPUP   EQU   *
+         CLOSE TEACHERS
+         CLOSE REPORT
+         BR    10
+*
+*        Literals
+*
+         LTORG
+*
+HYPHEN   EQU   C'-'
+*
+*        File definitions
+*
+TEACHERS DCB   LRECL=27,RECFM=FT,MACRF=R,EODAD=ATEND,                  X
+               DDNAME=TEACHER,RECORD=IREC
+REPORT   DCB   LRECL=60,RECFM=FT,MACRF=W,                              X
+               DDNAME=REPORT
+*
+*        WTO block
+*
+WTOBLOCK EQU   *
+         DC    H'80'         * For WTO, length of WTO buffer...
+         DC    H'0'                     should be binary zeroes...
+WTOTEXT  DS    CL76 
+*
+*        Input record definition
+*
+IREC     DS    0CL27          Teacher record
+ITID     DS    CL3            Teacher ID nbr
+ITNAME   DS    CL15           Teacher name
+ITDEG    DS    CL4            Highest degree
+ITTEN    DS    CL1            Tenured?
+ITPHONE  DS    CL4            Phone nbr 
+*
+*        Heading definitions
+*
+HD1      DS    0CL60
+         DC    CL40'      LIST OF TENURED INSTRUCTORS       '
+         DC    CL20' '
+HD2      DS    0CL60
+         DC    CL60' '
+HD3      DS    0CL60
+         DC    CL40'ID#        Name         PhD?    Phone   '
+         DC    CL20' '
+HD4      DS    0CL60
+         DC    CL40'---   ---------------   ----   -------- '
+         DC    CL20' '
+*
+*        Record definition
+*
+OREC     DS    0CL60
+OTID     DS    CL3            Teacher ID nbr
+         DC    CL3' '
+OTNAME   DS    CL15           Teacher name
+         DC    CL4' '
+OPHD     DS    CL1            PhD(Y/N)
+         DC    CL5' '
+OTPHONE  DS    CL8            Phone nbr
+         DC    CL21' '
+BLANK    DC    CL76' '        Blank record
+         END
