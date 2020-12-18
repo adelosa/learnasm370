@@ -95,14 +95,14 @@ There is substantial differences in how PC/370 macros deal with files vs Z390 ma
 
 For working on the PC, there are some simplifications dealing with line endings in z390 that make sense to use.
 
-### `OPEN` macro
+#### `OPEN` macro
 
 With z390, you need to specify if you will be opening a file for input or output
 
              OPEN  (TEACHERS,INPUT)
              OPEN  (REPORT,OUTPUT)
 
-### `DCB` macro
+#### `DCB` macro
 
 The following lines demonstrate the definition of an input (TEACHERS) and output (REPORT) files
 
@@ -120,7 +120,7 @@ In windows, you can set environment variables using the `SET` command.
 
     SET TEACHER=c:\teacher.dat
 
-### Code changes
+#### Removal of line ending/ASCII specific logic
 
 Because of the PC file handling support in z390, you can remove any instructions in the programs that deal with ASCII and line endings. 
 
@@ -141,3 +141,28 @@ No need to move line endings explicitly
 
     MVC   OCRLF,WCRLF               PC/370 ONLY - end line w/ CR/LF
 
+### By default, overflows will generate abends
+
+In chapter 7, the book discusses Packed decimal addition (`AP` instruction) and looks 
+at how to deal with overflows - that is where the result of an instruction
+does not fit into the output memory.
+
+If you just run the example, instead of getting to the `BO` (Branch overflow) instruction
+you will receive a S0CA abend which is a Decimal Overflow Exception.
+
+I am not sure why this behavior is different - it is possibly an enhancement to
+later versions of assembler/MVS. In any case, you will need to explicitly turn off
+the trap to mimic the behavior of the book.
+
+I used the `ESPIE` macro to create an exit when a decimal overflow is encountered.
+
+See https://www.ibm.com/support/knowledgecenter/SSLTBW_2.2.0/com.ibm.zos.v2r2.ieaa600/iea3a6_Using_the_ESPIE_macro.htm
+
+You can also refer to the `pacdec.mlc` module for an example of its usage as per the book.
+
+The macro seems to call the exit as a `BAS`, which means calling `RETURN` from the exit 
+will return you to the instruction immediatly after the overflow occured. 
+
+The bitmask for the branch is not set which means you cannot use the `BO` instruction. 
+I set a character flag in the exit to indicate an overflow has occured and then do a standard 
+branch based on its value (`CLC`).

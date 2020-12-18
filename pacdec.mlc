@@ -1,0 +1,41 @@
+         PRINT NOGEN
+*****************************************************************
+*  Mainframe assembler programming - Bill Qualls - Page 7.7 
+*  Adapted for z390 by Anthony Delosa
+*
+*  Detecting an overflow condition
+*
+*****************************************************************
+         START 0
+         EQUREGS
+BEGIN    SUBENTRY
+         WTO   'Packed decimal tests'
+         PACK  C,A                  Pack A into C
+         PACK  PK2,B                Pack B into PK2
+         ESPIE SET,OVERFLOW,10      Set trap for packed dec overflow
+         AP    C,PK2                Add PK2 to C
+         CLI   WOF,C'Y'             If overflow flag = Y
+         BE    LOG                  goto LOG
+         WTO   'No overflow'        console message
+         B     LOG                  goto LOG
+OVERFLOW EQU   *                    overflow exit
+         WTO   'Overflow detected'  .. console message
+         MVI   WOF,C'Y'             .. set Overflow flag to Y
+         RETURN 0                   .. return to next instruction
+LOG      UNPK  WTOTEXT(5),C         unpack C into WTOTEXT
+         MVZ   WTOTEXT+4(1),=X'F0'  reset sign (zone)
+         WTO   MF=(E,WTOBLOCK)      console message
+         SUBEXIT
+         LTORG
+         DS    0H            * INSURE HALF-WORD ALIGNMENT
+A        DC    CL5'99999'
+B        DC    CL1'1'
+C        DC    PL3'0'
+PK2      DC    PL3'0'
+WOF      DC    CL1'N'
+         DS    0H            * INSURE HALF-WORD ALIGNMENT
+WTOBLOCK EQU   *
+         DC    H'80'         * For WTO, length of WTO buffer...
+         DC    H'0'            should be binary zeroes...
+WTOTEXT  DC    CL76' '
+         END
