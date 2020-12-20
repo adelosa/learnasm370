@@ -6,51 +6,74 @@ https://www.billqualls.com/assembler/
 
 ## Why?
 
-The book references the PC/370 Assembler. This is a very old program and is no longer actively 
-maintained. I decided to try completing the book using the more modern tool z390.
+The book uses the PC/370 Assembler. This is a very old program and is no longer actively 
+maintained. I had issues running the program using Windows 10.
+
+I decided to try completing the book using the more modern tool z390.
+z390 is written in Java which means it will run on platforms with a Java runtime available.
 It was created by the same author as PC/370 (thanks Don Higgins). 
 
-z390 is written in Java which means it will run on platforms with a Java runtime available.
-
 Mainframe assembler programming is still an important skill used today and in short demand.
-I wanted to learn it without the need to run a VM to run PC/370 or Hercules with MVS 3.8j.
 
 ## Install
 
-This doc assumes you are using Windows and have a Java runtime and Git client already installed on your system.
+This document assumes you have a Java SDK and Git client installed on your system.
 
-### Download the latest z390 version
+### Download the latest release of z390
 
 http://www.z390.info/
 
-The latest version when this document was created was z390_v1703.zip (2020-11-19)
+z390_v1703.zip (2020-11-19)
 
-Unzip the folder onto you system. Take a note of the folder name.
+Unzip the folder onto you system.
+
+* For Windows, choose a location that makes sense for your system.
+* For MacOS, a good location is in ~/lib. If the folder does not already exist, create it.
 
 ### Clone this repo
 
-    git clone ....
+Use a location where you normally work on code.
 
+    git clone https://github.com/adelosa/learnasm370.git
 
 ### Config and run!
 
-Your working directory should be this folder. Edit the `asmlg.bat` and change the 
-variable `z390_dir` to point to your z390 unzipped folder.
+Open the newly cloned folder in your coding editor (see below for VSCode setup)
 
-You can now use the `asmlg.bat` command to assemble, link and go the programs.
+* For Windows, edit the `asmlg.bat` and change the variable `z390_dir` to point to your z390 installation folder.
+* For MACOS, create a symbolic link in your path to the `perl/z390.pl` script in your z390 install folder. The link should be called z390. 
 
-    asmlg.bat hello.mlc
+    ln -s ~/lib/z390/perl/z390.pl ~/bin/z390
 
-## What are the differences?
+You can now use the `asmlg.bat` or `asmlg.sh` scripts to assemble, link and run the assembler programs.
 
-PC/370 and z390 are not exactly the same. Where most of the differences are is in the macros
-that are provides as part of the install. When I first started I tried using the PC/370
-macros with z390 but I found this was problematic.. so I gave up and decided to port them.
+    win>   asmlg.bat hello.mlc
 
-In the end, this has not been that hard once you know where the issues are.
+    macos> ./asmlg.sh hello.mlc
+
+## Using Visual Studio code with IBM Z Open Editor
+
+IBM provides an extension to Visual Studio Code that supports the editing of HLASM assembly programs.
+I have found this editior very good and it works across Windows and MacOS.
+It also supports macro expansion and validation although this requires connection to a real mainframe 
+via Zowe. Even without this, its still a good editior experience.
+
+You will need to update the IBM Z Open Editor extension config to recognise the file extensions used 
+by z390. They are .MLC for programs and .MAC for macros.
+
+I use the terminal within the editor to run the jobs to compile, link and run the program.s
+
+## PC/370 vs z390?
+
+PC/370 and z390 are not exactly the same. Most of the differences are in the macros
+that are provided as part of the install. When I first started, I tried using the PC/370
+macros but using the z390 assembler but I found this problematic.. 
+
+So I gave up and decided to port them.
+
+This is not difficult once you know where the differences are.
 
 The following section details where things will be different from what is described in the book.
-
 
 ### Replace macro `REGS` with `EQUREGS`
 
@@ -66,7 +89,7 @@ BEGIN macro should be changed to SUBENTRY macro
 
     BEGIN    SUBENTRY
 
-### `WTO` works differently
+### `WTO` macro works differently
 
 The WTO macro is used to write messages to the console (write to operator)
 
