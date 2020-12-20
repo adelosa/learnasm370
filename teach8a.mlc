@@ -1,0 +1,134 @@
+         PRINT NOGEN
+****************************************************************
+* FILENAME: TEACH8A.MLC                                        *
+* AUTHOR  : Bill Qualls. z390 adaption by Anthony Delosa       *
+* SYSTEM  : z390 v1703                                         *
+* REMARKS : This is a revision of TEACH2C.MLC.                 *
+*           Produce list of teachers, with headings.           *
+*           Introduce page break logic.                        *
+**************************************************************** 
+* ---------------------- Z390 NOTES -------------------------- 
+* This section of the book is a little muddled to me. 
+* Section 8 asks us to start with teach2c.mlc. The 2c module  
+* does not uses sections at all, but the sourceo provided by
+* teach8a book seems to be a sectioned version of the module.
+* This version is my adaption of Teach2c with sections where
+* required. 
+* For book version of this source see TEACH8A1.MLC
+* I use PERFORM, PENTRY and PEND for sections rather
+* than manual BAL,BR and saving addresses 
+* 
+         START 0
+         EQUREGS
+BEGIN    SUBENTRY
+         WTO   'TEACH8A ... Begin execution'
+         OPEN  (TEACHERS,INPUT)
+         OPEN  (REPORT,OUTPUT)
+         PERFORM HDGS
+LOOP     GET   TEACHERS             Read a single teacher record
+         MVC   OTID,ITID            Move teacher ID Nbr to output
+         MVC   OTNAME,ITNAME        Move teacher Name to output
+         MVC   OTDEG,ITDEG          Move highest degree to output
+         MVC   OTTEN,ITTEN          Move tenure to output
+         MVC   OTPHONE,ITPHONE      Move phone nbr to output
+         PERFORM CHKLNS             Check if we need headings
+         PERFORM WRITE              Write report line
+         B     LOOP
+*
+* EOJ processing
+*
+ATEND    CLOSE TEACHERS
+         CLOSE REPORT
+         WTO   'TEACH8A ... Teacher list on REPORT.TXT'
+         WTO   'TEACH8A ... Normal end of program'
+         RETURN
+*
+* Write to output
+*
+WRITE    PENTRY
+         PUT   REPORT,OREC       Write report line
+         AP    LNS,=P'1'         Add 1 to line count
+         PEXIT 
+*
+* Headings
+*
+HDGS     PENTRY
+         AP    PGS,=P'1'                  Add 1 to page count
+         UNPK  HDPGS,PGS                  Move page count to headings
+         MVZ   HDPGS+L'HDPGS-1(1),=X'F0'  Remove sign
+         PUT   REPORT,FORMFEED
+         PUT   REPORT,HD1
+         PUT   REPORT,HD2
+         PUT   REPORT,HD3
+         PUT   REPORT,HD4
+         ZAP   LNS,=P'0'            Reset line count to zero
+         PEXIT
+*
+* Check lines
+*
+CHKLNS   PENTRY
+         CP    LNS,MAXLNS
+         BL    CHKLNSX
+         PERFORM HDGS
+CHKLNSX  PEXIT 
+
+*
+* Literals, if any, will go here
+*
+         LTORG
+*
+* File definitions 
+*
+TEACHERS DCB   LRECL=27,RECFM=FT,MACRF=R,EODAD=ATEND,                  X
+               DDNAME=TEACHER,RECORD=IREC
+REPORT   DCB   LRECL=60,RECFM=FT,MACRF=W,                              X
+               DDNAME=REPORT
+*
+* Miscellaneous field definitions
+*
+PGS      DC    PL2'0' Nbr of pages printed.
+LNS      DC    PL2'3' Lines printed on this page.
+MAXLNS   DC    PL2'3' Max nbr lines per page.
+*                     My line counts exclude hdgs
+*
+* Input record definition
+*
+IREC     DS    0CL27    Teacher record
+ITID     DS    CL3      Teacher ID nbr
+ITNAME   DS    CL15     Teacher name
+ITDEG    DS    CL4      Highest degree
+ITTEN    DS    CL1      Tenured?
+ITPHONE  DS    CL4      Phone nbr
+*
+* Output (line) definition
+*
+OREC     DS    0CL60
+OTID     DS    CL3      Teacher ID nbr
+         DC    CL3' '
+OTNAME   DS    CL15     Teacher name
+         DC    CL3' '
+OTDEG    DS    CL4      Highest degree
+         DC    CL3' '
+OTTEN    DS    CL1      Tenured?
+         DC    CL3' '
+OTPHONE  DS    CL4      Phone nbr
+         DC    CL21' '
+*
+* Headings definitions
+*
+HD1      DS    0CL60
+         DC    CL40'            LIST OF TEACHERS       Page '
+HDPGS    DC    CL3' '
+         DC    CL17' '
+HD2      DS    0CL60
+         DC    CL60' '
+HD3      DS    0CL60
+         DC    CL40'ID#        Name         Degr  Ten  Phone'
+         DC    CL20' '
+HD4      DS    0CL60
+         DC    CL40'---   ---------------   ----  ---  -----'
+         DC    CL20' '
+FORMFEED DS    0CL60 
+         DC    X'0C'    EBCDIC formfeed
+         DC    CL59' '
+         END   BEGIN 

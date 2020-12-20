@@ -63,7 +63,7 @@ by z390. They are .MLC for programs and .MAC for macros.
 
 I use the terminal within the editor to run the jobs to compile, link and run the program.s
 
-## PC/370 vs z390?
+## Differences between PC/370 vs z390
 
 PC/370 and z390 are not exactly the same. Most of the differences are in the macros
 that are provided as part of the install. When I first started, I tried using the PC/370
@@ -73,7 +73,7 @@ So I gave up and decided to port them.
 
 This is not difficult once you know where the differences are.
 
-The following section details where things will be different from what is described in the book.
+The following section details where you will have issues with what is in the book and how to fix it using z390.
 
 ### Replace macro `REGS` with `EQUREGS`
 
@@ -189,3 +189,7 @@ will return you to the instruction immediatly after the overflow occured.
 The bitmask for the branch is not set which means you cannot use the `BO` instruction. 
 I set a character flag in the exit to indicate an overflow has occured and then do a standard 
 branch based on its value (`CLC`).
+
+## Other hints
+
+Keep your program file names to 8 characters. Otherwise, the assembler won't run your program.
