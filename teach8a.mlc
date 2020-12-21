@@ -1,12 +1,12 @@
          PRINT NOGEN
-****************************************************************
-* FILENAME: TEACH8A.MLC                                        *
-* AUTHOR  : Bill Qualls. z390 adaption by Anthony Delosa       *
-* SYSTEM  : z390 v1703                                         *
-* REMARKS : This is a revision of TEACH2C.MLC.                 *
-*           Produce list of teachers, with headings.           *
-*           Introduce page break logic.                        *
-**************************************************************** 
+*****************************************************************
+*        FILENAME: TEACH8A.MLC                                  *
+*        AUTHOR  : Bill Qualls. z390 adaption by Anthony Delosa *
+*        SYSTEM  : z390 v1703                                   *
+*        REMARKS : This is a revision of TEACH2C.MLC.           *
+*                  Produce list of teachers, with headings.     *
+*                  Introduce page break logic.                  *
+***************************************************************** 
 * ---------------------- Z390 NOTES -------------------------- 
 * This section of the book is a little muddled to me. 
 * Section 8 asks us to start with teach2c.mlc. The 2c module  
@@ -46,15 +46,15 @@ ATEND    CLOSE TEACHERS
 * Write to output
 *
 WRITE    PENTRY
-         PUT   REPORT,OREC       Write report line
-         AP    LNS,=P'1'         Add 1 to line count
+         PUT   REPORT,OREC          Write report line
+         AP    LNS,=P'1'            Add 1 to line count
          PEXIT 
 *
 * Headings
 *
 HDGS     PENTRY
-         AP    PGS,=P'1'                  Add 1 to page count
-         UNPK  HDPGS,PGS                  Move page count to headings
+         AP    PGS,=P'1'            Add 1 to page count
+         UNPK  HDPGS,PGS            Move page count to headings
          MVZ   HDPGS+L'HDPGS-1(1),=X'F0'  Remove sign
          PUT   REPORT,FORMFEED
          PUT   REPORT,HD1

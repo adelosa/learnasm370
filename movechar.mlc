@@ -1,6 +1,12 @@
          PRINT NOGEN
+****************************************************************
+*        FILENAME: MOVECHAR.MLC                                *
+*        AUTHOR  : Bill Qualls/z390 adaption by Anthony Delosa *
+*        SYSTEM  : z390 v1703                                  *
+*        REMARKS : Exercises in ch2                            *
+****************************************************************
          START 0
-         REGS
+         EQUREGS
 BEGIN    SUBENTRY
          WTO   'Move some chars'
          MVC   WTOTEXT(76),=CL76'HELLO'

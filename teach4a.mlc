@@ -1,4 +1,12 @@
          PRINT NOGEN
+****************************************************************
+*        FILENAME: TEACH4A.MLC                                 *
+*        AUTHOR  : Bill Qualls/z390 adoption by Anthony Delosa *
+*        SYSTEM  : z390 v1703                                  *
+*        REMARKS : This is a revision of TEACH3A.MLC.          *
+*                  Produce list of tenured instructors.        *
+*                  How to structure a BAL program.             *
+**************************************************************** 
          DCBD
          EQUREGS
          DECBD

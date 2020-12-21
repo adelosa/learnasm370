@@ -1,4 +1,10 @@
          PRINT NOGEN
+****************************************************************
+*        FILENAME: TEACH3A.MLC                                 *
+*        AUTHOR  : Bill Qualls/z390 adoption by Anthony Delosa *
+*        SYSTEM  : z390 v1703                                  *
+*        REMARKS : Produce a list of tenured instructors.      *
+**************************************************************** 
          DCBD
          EQUREGS
          DECBD
@@ -38,6 +44,8 @@ OTHER    EQU   *
 *
 ATEND    CLOSE TEACHERS
          CLOSE REPORT
+         WTO   'TEACH3A ... Teacher list on REPORT.TXT'
+         WTO   'TEACH3A ... Normal end of program' 
          RETURN
 *
 *        Literals

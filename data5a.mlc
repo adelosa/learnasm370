@@ -1,9 +1,9 @@
          PRINT NOGEN
 ****************************************************************
-* FILENAME: DATA5A.MLC                                         *
-* AUTHOR : Bill Qualls                                         *
-* SYSTEM : z390                                                *
-* REMARKS : Data representations                               *
+*        FILENAME: DATA5A.MLC                                  *
+*        AUTHOR  : Bill Qualls/z390 adaption by Anthony Delosa *
+*        SYSTEM  : z390 v1703                                  *
+*        REMARKS : Data representations                        *
 ****************************************************************
          START 0
 BEGIN    SUBENTRY

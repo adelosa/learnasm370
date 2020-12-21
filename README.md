@@ -1,8 +1,16 @@
 # learnasm370
 
-The following repo has programs from the Bill Qualls assembler book **Mainframe Assembler Programming**, ISBN 0-471-24993-9 using the open source z390 assembler instead of PC/370.
+The following repo has programs from the Bill Qualls assembler book 
+**Mainframe Assembler Programming**, ISBN 0-471-24993-9 using the 
+open source z390 assembler instead of PC/370.
 
 https://www.billqualls.com/assembler/
+
+This is not a strict coverage of every exercise in the book, but the 
+programs I wrote as I read the book. Most of the major items are covered
+and I may do a straight conversation at some point in the future. 
+
+At this point its just notes. **YMMV**
 
 ## Why?
 
@@ -43,7 +51,7 @@ Open the newly cloned folder in your coding editor (see below for VSCode setup)
 * For Windows, edit the `asmlg.bat` and change the variable `z390_dir` to point to your z390 installation folder.
 * For MACOS, create a symbolic link in your path to the `perl/z390.pl` script in your z390 install folder. The link should be called z390. 
 
-    ln -s ~/lib/z390/perl/z390.pl ~/bin/z390
+    `ln -s ~/lib/z390/perl/z390.pl ~/bin/z390`
 
 You can now use the `asmlg.bat` or `asmlg.sh` scripts to assemble, link and run the assembler programs.
 
@@ -61,17 +69,17 @@ via Zowe. Even without this, its still a good editior experience.
 You will need to update the IBM Z Open Editor extension config to recognise the file extensions used 
 by z390. They are .MLC for programs and .MAC for macros.
 
-I use the terminal within the editor to run the jobs to compile, link and run the program.s
+I use the terminal within the editor to run the jobs to compile, link and run the program.
 
 ## Differences between PC/370 vs z390
 
 PC/370 and z390 are not exactly the same. Most of the differences are in the macros
-that are provided as part of the install. When I first started, I tried using the PC/370
-macros but using the z390 assembler but I found this problematic.. 
+that are provided as part of the assembler. When I first started, I tried using the PC/370
+macros with the z390 assembler but I found this problematic.
 
 So I gave up and decided to port them.
 
-This is not difficult once you know where the differences are.
+This is not difficult once you know what the differences are.
 
 The following section details where you will have issues with what is in the book and how to fix it using z390.
 
@@ -166,8 +174,8 @@ No need to move line endings explicitly
 
 ### By default, overflows will generate abends
 
-In chapter 7, the book discusses Packed decimal addition (`AP` instruction) and looks 
-at how to deal with overflows - that is where the result of an instruction
+In chapter 7, the book discusses Packed decimal addition (`AP` instruction) and 
+how to deal with overflows - that is where the result of an instruction
 does not fit into the output memory.
 
 If you just run the example, instead of getting to the `BO` (Branch overflow) instruction
@@ -192,4 +200,5 @@ branch based on its value (`CLC`).
 
 ## Other hints
 
-Keep your program file names to 8 characters. Otherwise, the assembler won't run your program.
+* Keep your program file names to 8 characters. Otherwise, the assembler won't run your program.
+* You can find a guide to the z390 macros here - http://www.z390.org/z390_Macro_and_Copybook_Documentation_Index.pdf

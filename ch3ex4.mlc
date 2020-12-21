@@ -1,9 +1,9 @@
          PRINT NOGEN
 ****************************************************************
-* FILENAME: HELLO.MLC                                          *
-* AUTHOR : Bill Qualls/hoganman                                *
-* SYSTEM : z390                                                *
-* REMARKS : This program will display a message.               *
+*        FILENAME: CH3EX4.MLC                                  *
+*        AUTHOR  : Bill Qualls/z390 adaption by Anthony Delosa *
+*        SYSTEM  : z390 V1703                                  *
+*        REMARKS : Exercises in book Chapter 3.                *
 ****************************************************************
          START 0
          EQUREGS

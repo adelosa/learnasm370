@@ -1,0 +1,32 @@
+         PRINT NOGEN
+****************************************************************
+*        FILENAME: CH7PG18.MLC                                 *
+*        AUTHOR  : Bill Qualls/z390 adaption by Anthony Delosa *
+*        SYSTEM  : z390 V1703                                  *
+*        REMARKS : Book exercises from chapter 7 pg 18         *
+****************************************************************
+         START 0
+BEGIN    SUBENTRY
+         CP    A,B         If A > B
+         BH    USEB        GOTO USEB
+         WTO   'A < B'     Console message
+         B     DONE        GOTO DONE
+USEB     EQU   *
+         WTO   'A > B'     Console message
+         SP    A,=P'1'     subtract 1 from A
+DONE     EQU   * 
+         WTO   'DONE'
+         UNPK  WTOTEXT(7),A
+         MVZ   WTOTEXT+6(1),=X'F0'  Remove sign
+         WTO   MF=(E,WTOBLOCK)
+         RETURN
+         LTORG
+         DS    0H            * INSURE HALF-WORD ALIGNMENT
+WTOBLOCK EQU   *
+         DC    H'80'         * For WTO, length of WTO buffer...
+         DC    H'0'            should be binary zeroes...
+WTOTEXT  DC    CL76' '
+A        DC    PL3'12'
+B        DC    PL3'11'
+C        DC    PL4'3'
+         END   BEGIN

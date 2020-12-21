@@ -1,10 +1,10 @@
          PRINT NOGEN
-****************************************************************
-* FILENAME: TEACH2C.MLC                                        *
-* AUTHOR  : Bill Qualls. z390 adaption by Anthony Delosa       *
-* SYSTEM  : z390 v1703                                         *
-* REMARKS : List of teachers, with headings.                   *
-****************************************************************
+*****************************************************************
+*        FILENAME: TEACH2C.MLC                                  *
+*        AUTHOR  : Bill Qualls. z390 adaption by Anthony Delosa *
+*        SYSTEM  : z390 v1703                                   *
+*        REMARKS : List of teachers, with headings.             *
+*****************************************************************
          START 0
          EQUREGS
 BEGIN    SUBENTRY

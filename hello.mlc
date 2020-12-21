@@ -1,12 +1,12 @@
          PRINT NOGEN
 ****************************************************************
-* FILENAME: HELLO.MLC                                          *
-* AUTHOR : Bill Qualls/hoganman                                *
-* SYSTEM : z390                                                *
-* REMARKS : This program will display a message.               *
+*        FILENAME: HELLO.MLC                                   *
+*        AUTHOR  : Bill Qualls/z390 adaption by Anthony Delosa *
+*        SYSTEM  : z390 v1703                                  *
+*        REMARKS : This program will display a message.        *
 ****************************************************************
          START 0
-         REGS
+         EQUREGS
 BEGIN    SUBENTRY
          WTO   'Hello world!'
          RETURN

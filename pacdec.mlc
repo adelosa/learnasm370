@@ -1,11 +1,11 @@
          PRINT NOGEN
-*****************************************************************
-*  Mainframe assembler programming - Bill Qualls - Page 7.7 
-*  Adapted for z390 by Anthony Delosa
-*
-*  Detecting an overflow condition
-*
-*****************************************************************
+****************************************************************
+*        FILENAME: PACDEC.MLC                                  *
+*        AUTHOR  : Bill Qualls/z390 adaption by Anthony Delosa *
+*        SYSTEM  : z390 v1703                                  *
+*        REMARKS : Trap packed dec overflow from Ch7 pg 7.7    *
+*                  Uses ESPIE macro to activate trap           *
+****************************************************************
          START 0
          EQUREGS
 BEGIN    SUBENTRY

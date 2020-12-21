@@ -1,25 +1,24 @@
          PRINT NOGEN
 ****************************************************************
-*        FILENAME: TEACH8A1.MLC                                *
-*        AUTHOR  : Bill Qualls/z390 adoption by Anthony Delosa *
+*        FILENAME: COGS7A.MLC                                  *
+*        AUTHOR  : Bill Qualls/z390 adaption by Anthony Delosa *
 *        SYSTEM  : z390 v1703                                  *
-*        REMARKS : This is a revision of TEACH2C.MLC.          *
-*                  Produce list of teachers, with headings.    *
-*                  Introduce page break logic.                 *
+*        REMARKS : Produce report for COGSWORTH INDUSTRIES     *
+*                  showing sales by state.                     *
 ****************************************************************
          START 0
          EQUREGS
 BEGIN    SUBENTRY
-         WTO   'TEACH8A ... Begin execution'
+         WTO   'COGS7A ... Begin execution'
          BAL   R10,SETUP
-MAIN     EQU *
+MAIN     EQU   *
          CLI   EOFSW,C'Y'
          BE    EOJ
          BAL   R10,PROCESS
          B     MAIN
 EOJ      EQU   *
          BAL   R10,WRAPUP
-         WTO   'TEACH8A ... Normal end of program'
+         WTO   'COGS7A ... Normal end of program'
          RETURN
 ****************************************************************
 *        SETUP - Those things which happen one time only,      *
@@ -27,9 +26,10 @@ EOJ      EQU   *
 ****************************************************************
 SETUP    EQU   *
          ST    R10,SVSETUP
-         OPEN  (TEACHERS,INPUT)
+         OPEN  (INVENTRY,INPUT)
          OPEN  (REPORT,OUTPUT)
-         BAL   R10,READ       Note: Removed BAL R10,HDGS
+         BAL   R10,HDGS
+         BAL   R10,READ
          L     R10,SVSETUP
          BR    R10
 ****************************************************************
@@ -37,15 +37,11 @@ SETUP    EQU   *
 ****************************************************************
 HDGS     EQU   *
          ST    R10,SVHDGS
-         AP    PGS,=P'1'         Add 1 to page count
-         UNPK  HDPGS,PGS         Move page count to headings
-         MVZ   HDPGS+L'HDPGS-1(1),=X'F0' Remove sign
-         PUT   REPORT,FORMFEED   PC/370 ONLY
          PUT   REPORT,HD1
          PUT   REPORT,HD2
          PUT   REPORT,HD3
          PUT   REPORT,HD4
-         ZAP   LNS,=P'0'         Reset line count to zero
+         PUT   REPORT,HD5
          L     R10,SVHDGS
          BR    R10
 ****************************************************************
@@ -54,7 +50,6 @@ HDGS     EQU   *
 PROCESS  EQU   *
          ST    R10,SVPROC
          BAL   R10,FORMAT
-         BAL   R10,CHKLNS
          BAL   R10,WRITE
          BAL   R10,READ
          L     R10,SVPROC
@@ -64,8 +59,9 @@ PROCESS  EQU   *
 ****************************************************************
 READ     EQU   *
          ST    R10,SVREAD
-         GET TEACHERS,IREC    Read a single teacher record
-         B     READX       
+         GET   INVENTRY,IREC     Read a single product record
+         AP    #IN,=P'1'         Increment record count
+         B     READX
 ATEND    EQU   *
          MVI   EOFSW,C'Y'
 READX    EQU   *
@@ -76,23 +72,24 @@ READX    EQU   *
 ****************************************************************
 FORMAT   EQU   *
          ST    R10,SVFORM
-         MVC   OTID,ITID         Move teacher ID Nbr to output
-         MVC   OTNAME,ITNAME     Move teacher Name to output
-         MVC   OTDEG,ITDEG       Move highest degree to output
-         MVC   OTTEN,ITTEN       Move tenure to output
-         MVC   OTPHONE,ITPHONE   Move phone nbr to output
+         MVC   OREC,BLANKS
+         MVC   ODESC,IDESC
+         MVC   OCALIF,ICALIF
+         MVC   OILL,IILL
+         MVC   OUTAH,IUTAH
+         MVC   OWISC,IWISC
+         PACK  WCALIF,ICALIF     Each product's sales must
+         PACK  WILL,IILL         be packed so they can be
+         PACK  WUTAH,IUTAH       added to total for this
+         PACK  WWISC,IWISC       product...
+         ZAP   WTOTAL,=P'0'      Initialize the total to zero
+         AP    WTOTAL,WCALIF     and start adding...
+         AP    WTOTAL,WILL
+         AP    WTOTAL,WUTAH
+         AP    WTOTAL,WWISC 
+         UNPK  OTOTAL,WTOTAL     Move total to output,
+         MVZ   OTOTAL+2(1),=X'F0' and remove the sign.
          L     R10,SVFORM
-         BR    R10
-****************************************************************
-*        CHKLNS - Check lines printed. Full page?              *
-****************************************************************
-CHKLNS   EQU   *
-         ST    R10,SVCHKLNS
-         CP    LNS,MAXLNS
-         BL    CHKLNSX
-         BAL   R10,HDGS
-CHKLNSX  EQU   *
-         L     R10,SVCHKLNS
          BR    R10
 ****************************************************************
 *        WRITE - Write a single detail line.                   *
@@ -100,7 +97,6 @@ CHKLNSX  EQU   *
 WRITE    EQU   *
          ST    R10,SVWRITE
          PUT   REPORT,OREC       Write report line
-         AP    LNS,=P'1'
          L     R10,SVWRITE
          BR    R10
 ****************************************************************
@@ -109,11 +105,17 @@ WRITE    EQU   *
 ****************************************************************
 WRAPUP   EQU   *
          ST    R10,SVWRAP
-         CLOSE TEACHERS
+         MVC   OREC,BLANKS
+         BAL   R10,WRITE         Skip a line.
+         MVC   OREC(22),=CL22'XXX records processed.'
+         UNPK  OREC(3),#IN       Count
+         MVZ   OREC+2(1),=X'F0'  Remove sign
+         BAL   R10,WRITE
+         CLOSE INVENTRY
          CLOSE REPORT
-         WTO   'TEACH8A ... Teacher list on REPORT.TXT'
+         WTO   'COGS7A ... Sales recap on REPORT.TXT'
          L     R10,SVWRAP
-         BR R10
+         BR    R10
 ****************************************************************
 *        Literals, if any, will go here                        *
 ****************************************************************
@@ -121,10 +123,11 @@ WRAPUP   EQU   *
 ****************************************************************
 *        File definitions                                      *
 ****************************************************************
-TEACHERS DCB   LRECL=27,RECFM=FT,MACRF=R,EODAD=ATEND,                  X
-               DDNAME=TEACHER,RECORD=IREC
+INVENTRY DCB   LRECL=39,RECFM=FT,MACRF=R,EODAD=ATEND,                  X
+               DDNAME=INVENTRY,RECORD=IREC
 REPORT   DCB   LRECL=60,RECFM=FT,MACRF=W,                              X
                DDNAME=REPORT
+
 ****************************************************************
 *        RETURN ADDRESSES                                      *
 ****************************************************************
@@ -135,54 +138,62 @@ SVREAD   DC    F'0'     READ
 SVFORM   DC    F'0'     FORMAT
 SVWRITE  DC    F'0'     WRITE
 SVWRAP   DC    F'0'     WRAPUP
-SVCHKLNS DC    F'0'     CHKLNS
 ****************************************************************
 *        Miscellaneous field definitions                       *
 ****************************************************************
 EOFSW    DC    CL1'N'   End of file? (Y/N)
-PGS      DC    PL2'0'   Nbr of pages printed.
-LNS      DC    PL2'3'   Lines printed on this page.
-MAXLNS   DC    PL2'3'   Max nbr lines per page.
-*                       My line counts exclude hdgs.
+BLANKS   DC    CL60' '
+WCALIF   DC    PL2'0'   Units sold in Calif
+WILL     DC    PL2'0'   Units sold in Illinois
+WUTAH    DC    PL2'0'   Units sold in Utah
+WWISC    DC    PL2'0'   Units sold in Wisconsin
+WTOTAL   DC    PL2'0'   Units sold in all states
+#IN      DC    PL2'0'   Input record count
 ****************************************************************
 *        Input record definition                               *
 ****************************************************************
-IREC     DS    0CL27    Teacher record
-ITID     DS    CL3      Teacher ID nbr
-ITNAME   DS    CL15     Teacher name
-ITDEG    DS    CL4      Highest degree
-ITTEN    DS    CL1      Tenured?
-ITPHONE  DS    CL4      Phone nbr
+IREC     DS    0CL39    1-39 Inventory record
+IDESC    DS    CL10     1-10 Product description
+ICALIF   DS    CL3      11-13 Units sold in Calif
+IILL     DS    CL3      14-16 Units sold in Illinois
+IUTAH    DS    CL3      17-19 Units sold in Utah
+IWISC    DS    CL3      20-22 Units sold in Wisconsin
+IBEGIN   DS    CL3      23-25 Beginning inventory
+IPURCH   DS    CL3      26-28 Purchases throughout year
+IQOH     DS    CL3      29-31 Actual quantity on hand
+ICOST    DS    CL4      32-35 Cost (each) 99V99
+ISELL    DS    CL4      36-39 Sell for (each) 99V99
 ****************************************************************
 *        Output (line) definition                              *
 ****************************************************************
-OREC     DS    0CL60
-OTID     DS    CL3      Teacher ID nbr
-         DC    CL3' '
-OTNAME   DS    CL15     Teacher name
-         DC    CL3' '
-OTDEG    DS    CL4      Highest degree
-         DC    CL3' '
-OTTEN    DS    CL1      Tenured?
-         DC    CL3' '
-OTPHONE  DS    CL4      Phone nbr
-         DC    CL21' '
+OREC     DS    0CL60    1-60
+ODESC    DS    CL10     1-10 Product description
+         DS    CL5      11-15
+OCALIF   DS    CL3      16-18 Units sold in Calif
+         DS    CL6      19-24
+OILL     DS    CL3      25-27 Units sold in Illinois
+         DS    CL6      28-33
+OUTAH    DS    CL3      34-36 Units sold in Utah
+         DS    CL6      37-42
+OWISC    DS    CL3      43-45 Units sold in Wisconsin
+         DS    CL6      46-51
+OTOTAL   DS    CL3      52-54 Units sold in all states
+         DS    CL6      55-60
 ****************************************************************
 *        Headings definitions                                  *
 ****************************************************************
-FORMFEED DS    0CL60
-         DC    X'0C'    EBCDIC formfeed
-         DC    CL59' '
 HD1      DS    0CL60
-         DC    CL40'            LIST OF TEACHERS       Page '
-HDPGS    DC    CL3' '
-         DC    CL17' '
+         DC    CL40'                 COGSWORTH INDUSTRIES   '
+         DC    CL20' '
 HD2      DS    0CL60
-         DC    CL60' '
+         DC    CL40'                      Sales Recap       '
+         DC    CL20' '
 HD3      DS    0CL60
-         DC    CL40'ID#        Name         Degr  Ten  Phone'
-         DC    CL20' '
-HD4      DS    0CL60
-         DC    CL40'---   ---------------   ----  ---  -----'
-         DC    CL20' '
+         DC    CL60' '
+HD4      DS    0CL62
+         DC    CL40'Product       Calif     Ill      Utah   '
+         DC    CL20'  Wisc    TOTAL'
+HD5      DS    0CL60
+         DC    CL40'----------    -----    -----    -----   '
+         DC    CL20' -----    -----'
          END   BEGIN 

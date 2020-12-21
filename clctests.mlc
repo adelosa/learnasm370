@@ -1,4 +1,10 @@
          PRINT NOGEN
+****************************************************************
+*        FILENAME: CLCTESTS.MLC                                *
+*        AUTHOR  : Bill Qualls/z390 adaption by Anthony Delosa *
+*        SYSTEM  : z390 V1703                                  *
+*        REMARKS : Book exercises from chapter 3               *
+****************************************************************
          START 0
          EQUREGS
 BEGIN    SUBENTRY

@@ -1,9 +1,9 @@
          PRINT NOGEN
 ****************************************************************
-* FILENAME: OFFER2A.MLC *
-* AUTHOR : *
-* SYSTEM : PC/370 R4.2 *
-* REMARKS : A quick-and-dirty list of offerings. *
+*        FILENAME: OFFER2A.MLC                                 *
+*        AUTHOR  : Bill Qualls/z390 adaption by Anthony Delosa *
+*        SYSTEM  : z390 v1703                                  *
+*        REMARKS : A quick-and-dirty list of offerings.        *
 ****************************************************************
          START 0
          EQUREGS

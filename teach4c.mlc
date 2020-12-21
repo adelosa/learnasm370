@@ -1,4 +1,13 @@
          PRINT NOGEN
+****************************************************************
+*        FILENAME: TEACH4C.MLC                                 *
+*        AUTHOR  : Bill Qualls/z390 adoption by Anthony Delosa *
+*        SYSTEM  : z390 v1703                                  *
+*        REMARKS : This is a revision of TEACH4B.MLC.          *
+*                  Produce list of tenured instructors.        *
+*                  How to structure a BAL program.             *
+*        ==AD==    Use PENTRY and PEXIT macros rather than BAS *
+****************************************************************
          DCBD
          EQUREGS
          DECBD
@@ -88,6 +97,7 @@ WRITE    PENTRY
 WRAPUP   PENTRY
          CLOSE TEACHERS
          CLOSE REPORT
+         WTO   'TEACH4C ... Teacher list on REPORT.TXT'
          PEXIT
 **************************************************************
          LTORG
