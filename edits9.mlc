@@ -1,0 +1,129 @@
+         PRINT NOGEN
+****************************************************************
+*        FILENAME: EDITS9.MLC                                  *
+*        AUTHOR  : Bill Qualls/z390 adaption by Anthony Delosa *
+*        SYSTEM  : z390 v1703                                  *
+*        REMARKS : Demonstrate the edit instruction by         *
+*                  implementing examples shown in chapter 9.   *
+****************************************************************
+         START 0
+BEGIN    SUBENTRY
+****************************************************************
+         WTO   'SEE PAGE 9.3'
+****************************************************************
+         MVC   WK8,MASK
+         ED    WK8,FLDA
+         PERFORM WTO
+         MVC   WK8,=X'4020202020202020'
+         ED    WK8,FLDA
+         PERFORM WTO
+****************************************************************
+         WTO   'SEE PAGE 9.4'
+****************************************************************
+         MVC   WK6,MASK2
+         ED    WK6,FLDB
+         PERFORM WTO
+         MVC   WK6,MASK3
+         ED    WK6,FLDB
+         PERFORM WTO
+****************************************************************
+         WTO   'SEE PAGE 9.5'
+****************************************************************
+         MVC   WK9,=X'4020202020214B2020'
+         ED    WK9,FLDA
+         PERFORM WTO
+         MVC   WK7,=X'402020214B2020'
+         ED    WK7,FLDB
+         PERFORM WTO
+         MVC   WK7,=X'402021204B2020'
+         ED    WK7,FLDB
+         PERFORM WTO
+****************************************************************
+         WTO   'SEE PAGE 9.6'
+****************************************************************
+         MVC   WK10,=X'4020206B2020214B2020'
+         ED    WK10,FLDA
+         PERFORM WTO
+         MVC   WK7,MASK4
+         ED    WK7,POS
+         PERFORM WTO
+         MVC   WK7,MASK4
+         ED    WK7,NEG
+         PERFORM WTO
+****************************************************************
+         WTO   'SEE PAGE 9.7'
+****************************************************************
+         MVC   WK8,MASK5
+         ED    WK8,POS
+         PERFORM WTO
+         MVC   WK8,MASK5
+         ED    WK8,NEG
+         PERFORM WTO
+****************************************************************
+         WTO   'SEE PAGE 9.8'
+****************************************************************
+         MVC   WK9,CR
+         ED    WK9,POS
+         PERFORM WTO
+         MVC   WK9,CR
+         ED    WK9,NEG
+         PERFORM WTO
+         MVC   WK9,DB
+         ED    WK9,POS
+         PERFORM WTO
+         MVC   WK9,DB
+         ED    WK9,NEG
+         PERFORM WTO
+         MVC   WK10,CHKA
+         ED    WK10,FLDA
+         PERFORM WTO
+         MVC   WK7,CHKB
+         ED    WK7,FLDB
+         PERFORM WTO
+****************************************************************
+         WTO   'ALL DONE...'
+****************************************************************
+         RETURN
+WTO      PENTRY
+         WTO   MF=(E,WTOBLOCK)   Print the current buffer
+         MVC   WTOTEXT,BLANKS    Clear text for next message
+         PEXIT
+*
+* Literals, if any, will go here
+*
+         LTORG
+*
+* Other field definitions
+*
+FLDA     DC    PL4'123456'
+FLDB     DC    PL3'0'
+POS      DC    PL3'+123'
+NEG      DC    PL3'-123'
+MASK     DC    X'4020202020202020'     BZZZZZZZ
+MASK2    DC    X'402020202020'         BZZZZZ
+MASK3    DC    X'402020202120'         BZZZZ9
+MASK4    DC    X'402021204B2020'       BZZ9.99
+MASK5    DC    X'402021204B202060'     BZZ9.99-
+CR       DC    X'402021204B2020C3D9'   BZZ9.99CR
+DB       DC    X'402021204B2020C4C2'   BZZ9.99DB
+CHKA     DC    X'5C20206B2021204B2020' ***,**9.99
+CHKB     DC    X'5C2021204B2020'       ***9.99
+         DS    0H                      ensure HW align
+WTOBLOCK EQU   *
+         DC    H'80'       For WTO, length of WTO buffer...
+         DC    H'0'              should be binary zeroes...
+WTOTXT1  DC    0CL76
+WTOTEXT  DC    CL76' '
+**********************************************************
+* The work fields are defined as redefs of the WTOBLOCK  
+* so we don't need to move each one to do the WTO. 
+* The EQU sets the value to address of the first param
+* WTOTEXT, and sets the length to the second parm
+**********************************************************
+WK6      EQU   WTOTXT1,6
+WK7      EQU   WTOTXT1,7
+WK8      EQU   WTOTXT1,8
+WK9      EQU   WTOTXT1,9
+WK10     EQU   WTOTXT1,10
+BLANKS   DC    CL76' '
+         END   BEGIN

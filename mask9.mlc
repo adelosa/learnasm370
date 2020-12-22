@@ -1,0 +1,57 @@
+         PRINT NOGEN
+         START 0
+BEGIN    SUBENTRY
+********************************
+         MVC   WTOTEXT,BLANKS
+         MVC   WTOTEXT(11),=X'5C202020206B202020C4C4'
+         ED    WTOTEXT(11),=PL4'-1234'
+         WTO   MF=(E,WTOBLOCK)
+********************************
+         MVC   WK6,MASK2
+         ED    WK6,FLDB
+         MVC   WTOTEXT,BLANKS
+         MVC   WTOTEXT(6),WK6
+         WTO   MF=(E,WTOBLOCK)
+********************************
+         UNPK  WK6,X
+         MVC   WTOTEXT,BLANKS
+         MVC   WTOTEXT(6),WK6
+         WTO   MF=(E,WTOBLOCK)
+********************************
+         UNPK  WK6,X
+         MVZ   WK6+5(1),=X'F0'
+         MVC   WTOTEXT,BLANKS
+         MVC   WTOTEXT(6),WK6
+         WTO   MF=(E,WTOBLOCK)
+********************************
+         MVC   WK6,MASKX
+         ED    WK6,X
+         MVC   WTOTEXT,BLANKS
+         MVC   WTOTEXT(6),WK6
+         WTO   MF=(E,WTOBLOCK)
+********************************
+         MVC   WK4,MASKX
+         ED    WK4,X+1
+         MVC   WTOTEXT,BLANKS
+         MVC   WTOTEXT(4),WK4
+         WTO   MF=(E,WTOBLOCK)
+
+         RETURN
+         LTORG
+         DS    0H           HW boundary align
+FLDA     DC    PL4'123456' 
+MASK     DC    X'4020202020202020'
+WK8      DC    CL8' '
+FLDB     DC    PL3'0'
+MASK2    DC    X'402020202020'
+WK6      DC    CL6' '
+X        DC    PL3'1234'
+MASKX    DC    XL6'402020202020'
+WK4      DC    CL4' '
+         DS    0H          ensure HW align
+WTOBLOCK EQU   *
+         DC    H'80'       For WTO, length of WTO buffer...
+         DC    H'0'              should be binary zeroes...
+WTOTEXT  DC    CL76' '         
+BLANKS   DC    CL76' '
+         END   BEGIN
