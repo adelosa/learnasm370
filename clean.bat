@@ -6,4 +6,5 @@ del *.LOG
 del *.LST
 del *.OBJ
 del *.PRN
-del REPORT.TXT
+del *.TRE
+del *.TXT
