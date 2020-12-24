@@ -1,0 +1,17 @@
+*****************************************************************
+* program: alp65.mlc
+* author : John Ehrman
+* desc   : Hello world from chapter 6.5 of book
+*          Assembler Language Programming for IBM System Z
+*          Servers 
+*****************************************************************
+Test     Start 0                 First line of program Line 4
+         Print NoGen             Line 5
+* Sample Program Line 6
+         BASR  15,0              Establish a base register Line 7
+         Using *,15              Inform the Assembler Line 8
+*         PRINTOUT MyName,*       Print name and stop Line 9
+         XPRNT MyName,L'MyName   >9>  ASSIST print
+         RETURN 0                >9>  Exit
+MyName   DC    C'John R. Ehrman' Define constant with name Line 10
+         END   Test              Last statement Line 11

@@ -8,3 +8,8 @@ del *.OBJ
 del *.PRN
 del *.TRE
 del *.TXT
+del *.XRD
+del *.XPR
+del *.XPH
+del *.XGT
+del *.XPT
