@@ -1,0 +1,197 @@
+         PRINT NOGEN
+****************************************************************
+*        FILENAME: OFFER10A.MLC                                *
+*        AUTHOR  : Bill Qualls/z390 Adaption by Anthony Delosa *
+*        SYSTEM  : z390 v1703                                  *
+*        REMARKS : Produce list of course offerings for all    *
+*                  semesters. Includes page break logic.       *
+****************************************************************
+         START 0
+         YREGS
+BEGIN    SUBENTRY
+         WTO   'OFFER10A ... Begin execution'
+         BAL   R10,SETUP
+MAIN     EQU   *
+         CLI   EOFSW,C'Y'
+         BE    EOJ
+         BAL   R10,PROCESS
+         B     MAIN
+EOJ      EQU   *
+         BAL   R10,WRAPUP
+         WTO   'OFFER10A ... Normal end of program'
+         RETURN
+****************************************************************
+*        SETUP - Those things which happen one time only,      *
+*                before any records are processed.             *
+****************************************************************
+SETUP    EQU   *
+         ST    R10,SVSETUP
+         OPEN  (OFFER,INPUT)
+         OPEN  (REPORT,OUTPUT)
+         BAL   R10,READ
+         L     R10,SVSETUP
+         BR    R10
+****************************************************************
+*        HDGS - Print headings.                                *
+****************************************************************
+HDGS     EQU   *
+         ST    R10,SVHDGS
+         AP    PGS,=P'1'            Add 1 to page count
+         MVC   HDPGS,=X'40202120'   Edit pattern for page count
+         ED    HDPGS,PGS            Move page count to heading
+         PUT   REPORT,FORMFEED
+         PUT   REPORT,HD1
+         PUT   REPORT,HD2
+         PUT   REPORT,HD3
+         PUT   REPORT,HD4
+         ZAP   LNS,=P'0'            Reset line count to zero
+         L     R10,SVHDGS
+         BR    R10
+****************************************************************
+*        PROCESS - Those things which happen once per record.  *
+****************************************************************
+PROCESS  EQU   *
+         ST    R10,SVPROC
+         BAL   R10,CHKLNS
+         BAL   R10,FORMAT
+         BAL   R10,WRITE
+         BAL   R10,READ
+         L     R10,SVPROC
+         BR    R10
+****************************************************************
+*        READ - Read a record.                                 *
+****************************************************************
+READ     EQU   *
+         ST    R10,SVREAD
+         GET   OFFER,IREC           Read a single offer record
+         B     READX
+ATEND    EQU   *
+         MVI   EOFSW,C'Y'
+READX    EQU   *
+         L     R10,SVREAD
+         BR    R10
+****************************************************************
+*        CHKLNS - Check lines printed. Full page?              *
+****************************************************************
+CHKLNS   EQU   *
+         ST    R10,SVCHKLNS
+         CP    LNS,MAXLNS
+         BL    CHKLNSX
+         BAL   R10,HDGS
+CHKLNSX  EQU   *
+         L     R10,SVCHKLNS
+         BR    R10
+****************************************************************
+*        FORMAT - Format a single detail line.                 *
+****************************************************************
+FORMAT   EQU   *
+         ST    R10,SVFORM
+         MVC   OREC(40),BLANKS
+         MVC   OSEM,ISEM            Semester
+         MVC   OCID,ICID            Course ID
+         MVC   OSECT,ISECT          Section number
+         MVC   OTID,ITID            Teacher ID
+         L     R10,SVFORM
+         BR    R10
+****************************************************************
+*        WRITE - Write a single detail line.                   *
+****************************************************************
+WRITE    EQU   *
+         ST    R10,SVWRITE
+         PUT   REPORT,OREC          Write report line
+         AP    LNS,=P'1'
+         L     R10,SVWRITE
+         BR    R10
+****************************************************************
+*        WRAPUP - Those things which happen one time only,     *
+*                 after all records have been processed.       *
+****************************************************************
+WRAPUP   EQU   *
+         ST    R10,SVWRAP
+         CLOSE OFFER
+         CLOSE REPORT
+         WTO   'OFFER10A ... Course list on REPORT.TXT'
+         L     R10,SVWRAP
+         BR    R10
+****************************************************************
+*        Literals, if any, will go here                        *
+****************************************************************
+         LTORG
+****************************************************************
+*        File definitions                                      *
+****************************************************************
+OFFER    DCB   LRECL=16,RECFM=FT,MACRF=R,EODAD=ATEND,                  X
+               DDNAME=OFFER,RECORD=IREC
+REPORT   DCB   LRECL=40,RECFM=FT,MACRF=W,                              X
+               DDNAME=REPORT
+
+****************************************************************
+*        RETURN ADDRESSES                                      *
+****************************************************************
+SVSETUP  DC    F'0'              SETUP
+SVHDGS   DC    F'0'              HDGS
+SVPROC   DC    F'0'              PROCESS
+SVREAD   DC    F'0'              READ
+SVFORM   DC    F'0'              FORMAT
+SVWRITE  DC    F'0'              WRITE
+SVWRAP   DC    F'0'              WRAPUP
+SVCHKLNS DC    F'0'              CHKLNS
+****************************************************************
+*        Miscellaneous field definitions                       *
+****************************************************************
+EOFSW    DC    CL1'N'            End of file? (Y/N)
+PGS      DC    PL2'0'            Nbr of pages printed.
+LNS      DC    PL2'10'           Lines printed on this page.
+MAXLNS   DC    PL2'10'           Max nbr lines per page.
+* My line counts exclude hdgs.
+BLANKS   DC    CL40' '
+****************************************************************
+*        Input record definition                               *
+****************************************************************
+IREC     DS    0CL18             1-18 Offer record
+ISEM     DS    CL3               1- 3 Semester
+ICID     DS    0CL5              4- 8 Course ID
+IDEPT    DS    CL2               4- 5 Department
+         DS    CL3               6- 8 Course number
+ISECT    DS    CL1               9- 9 Section number
+ITID     DS    CL3               10-12 Teacher ID
+IROOM    DS    CL4               13-16 Room number
+****************************************************************
+* Output (line) definition *
+****************************************************************
+OREC     DS    0CL40             1-40
+         DC    CL3' '            1- 3
+OSEM     DS    CL3               4- 6 Semester
+         DC    CL4' '            7-10
+OCID     DS    CL5               11-15 Course ID
+         DC    CL6' '            16-21
+OSECT    DS    CL1               22-22 Section number
+         DC    CL8' '            23-30
+OTID     DS    CL3               31-33 Teacher ID
+         DC    CL7' '            34-40
+* Headings definitions *
+****************************************************************
+*
+* ----+----1----+----2----+----3----+----4
+*           COURSE OFFERINGS      PageBZZ9
+*
+*    Sem   Course   Section   Teachers
+*    ---   ------   -------   --------
+*    XXX    XXXXX      X        XXX
+*    XXX    XXXXX      X        XXX
+*    XXX    XXXXX      X        XXX
+*
+FORMFEED DS    0CL40
+*         DC    X'0C' EBCDIC formfeed
+*         DC    CL39' '
+         DC    40C'_' For testing...
+HD1      DS    0CL40
+         DC    CL36'           COURSE OFFERINGS     Page'
+HDPGS    DC    CL4'BZZ9'
+HD2      DS    0CL40
+         DC    CL40' '
+HD3      DS    0CL40
+         DC    CL40'   Sem   Course   Section   Teacher '
+HD4      DS    0CL40
+         DC    CL40'   ---   ------   -------   ------- '
+         END   BEGIN
