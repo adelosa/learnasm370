@@ -1,15 +1,17 @@
          PRINT NOGEN
 ****************************************************************
-*        FILENAME: OFFER10C.MLC                                *
+*        FILENAME: OFFER10D.MLC                                *
 *        AUTHOR  : Bill Qualls/z390 Adaption by Anthony Delosa *
 *        SYSTEM  : z390 v1703                                  *
 *        REMARKS : Produce list of course offerings for all    *
 *                  semesters. Includes page break logic.       *
+*                  Multipe level control break.                *
+*                  Minor break (dept) is summary only          *
 ****************************************************************
          START 0
          YREGS
 BEGIN    SUBENTRY
-         WTO   'OFFER10C ... Begin execution'
+         WTO   'OFFER10D ... Begin execution'
          BAL   R10,SETUP
 MAIN     EQU   *
          CLI   EOFSW,C'Y'
@@ -18,7 +20,7 @@ MAIN     EQU   *
          B     MAIN
 EOJ      EQU   *
          BAL   R10,WRAPUP
-         WTO   'OFFER10C ... Normal end of program'
+         WTO   'OFFER10D ... Normal end of program'
          RETURN
 ****************************************************************
 *        SETUP - Those things which happen one time only,      *
@@ -48,6 +50,7 @@ HDGS     EQU   *
          PUT   REPORT,BLANKS
          PUT   REPORT,HD3
          PUT   REPORT,HD4
+         PUT   REPORT,HD5
          ZAP   LNS,=P'0'            Reset line count to zero
          L     R10,SVHDGS
          BR    R10
@@ -60,9 +63,6 @@ PROCESS  EQU   *
          BAL   R10,CHKDEPT          See if new department
          AP    #SEM,=P'1'           Count sections by semester
          AP    #DEPT,=P'1'          Count sections by department
-         BAL   R10,CHKLNS
-         BAL   R10,FORMAT
-         BAL   R10,WRITE
          BAL   R10,READ
          L     R10,SVPROC
          BR    R10
@@ -93,28 +93,6 @@ CHKSEMX  EQU   *
          L     R10,SVCHKSEM
          BR    R10
 ****************************************************************
-*        ENDSEM - End semester                                 *
-*                 (Process control break)                      *
-*                 Show count of sections for this semester     *
-*                 Force next semester to another page          *
-****************************************************************
-ENDSEM   EQU   *
-         ST    R10,SVENDSEM
-         BAL   R10,ENDDEPT          Change in semester implies
-*                                   change in dept as well 
-         MVC   OREC(40),BLANKS      This area used several ways
-         BAL   R10,WRITE            Skip a line
-         MVC   OREC+6(25),=C'*** Sem XXX BZZ9 sections'
-         MVC   OREC+14(3),HOLDSEM
-         MVC   OREC+18(4),=X'40202120'
-         ED    OREC+18(4),#SEM
-         BAL   R10,WRITE
-         MVC   OREC(40),BLANKS
-         ZAP   #SEM,=P'0'           Reset counter
-         ZAP   LNS,MAXLNS           Force next sem. to new page
-         L     R10,SVENDSEM
-         BR    R10 
-****************************************************************
 *        CHKDEPT - Check for change in department              *
 *        (minor control break)                                 *
 ****************************************************************
@@ -128,6 +106,28 @@ CHKDEPTX EQU   *
          L     R10,SVCHKDEP
          BR    R10
 ****************************************************************
+*        ENDSEM - End semester                                 *
+*                 (Process control break)                      *
+*                 Show count of sections for this semester     *
+*                 Force next semester to another page          *
+****************************************************************
+ENDSEM   EQU   *
+         ST    R10,SVENDSEM
+         BAL   R10,ENDDEPT          Change in semester implies
+*                                   change in dept as well 
+         PUT   REPORT,HD5
+         AP    LNS,=P'1'
+         MVC   OREC(40),BLANKS      
+         MVC   ODEPT(5),=CL5'Total'
+         MVC   O#DEPT,=X'40202120'  Edit mask
+         ED    O#DEPT,#SEM
+         BAL   R10,WRITE
+         MVC   OREC(40),BLANKS
+         ZAP   #SEM,=P'0'           Reset counter
+         ZAP   LNS,MAXLNS           Force next sem. to new page
+         L     R10,SVENDSEM
+         BR    R10 
+****************************************************************
 *        ENDDEPT - End department                              *
 *                  (Process minor control break)               *
 *                  Print count of sections in department       *
@@ -136,19 +136,13 @@ CHKDEPTX EQU   *
 ****************************************************************
 ENDDEPT  EQU   *
          ST    R10,SVENDDEP
-         CP    #DEPT,=P'2'
-         BL    ENDDEPT2
-         MVC   OREC(40),BLANKS      This area used several ways
-         BAL   R10,WRITE            Blank line before count
-         MVC   OREC+7(24),=C'** Dept XX BZZ9 sections'
-         MVC   OREC+15(2),HOLDDEPT
-         MVC   OREC+18(4),=X'40202120'
-         ED    OREC+18(4),#DEPT
-         BAL   R10,WRITE
-ENDDEPT2 EQU   *
+         BAL   R10,CHKLNS
          MVC   OREC(40),BLANKS
+         MVC   ODEPT,HOLDDEPT       Department
+         MVC   O#DEPT,=X'40202120'  Edit mask
+         ED    O#DEPT,#DEPT         # departments
          BAL   R10,WRITE
-         ZAP   #DEPT,=P'0'          Reset counter
+         ZAP   #DEPT,=P'0'           Reset # departments
          L     R10,SVENDDEP
          BR    R10 
 ****************************************************************
@@ -161,17 +155,6 @@ CHKLNS   EQU   *
          BAL   R10,HDGS
 CHKLNSX  EQU   *
          L     R10,SVCHKLNS
-         BR    R10
-****************************************************************
-*        FORMAT - Format a single detail line.                 *
-****************************************************************
-FORMAT   EQU   *
-         ST    R10,SVFORM
-         MVC   OREC(40),BLANKS
-         MVC   OCID,ICID            Course ID
-         MVC   OSECT,ISECT          Section number
-         MVC   OTID,ITID            Teacher ID
-         L     R10,SVFORM
          BR    R10
 ****************************************************************
 *        WRITE - Write a single detail line.                   *
@@ -191,7 +174,7 @@ WRAPUP   EQU   *
          BAL   R10,ENDSEM           Final control break
          CLOSE OFFER
          CLOSE REPORT
-         WTO   'OFFER10C ... Course list on REPORT.TXT'
+         WTO   'OFFER10D ... Course list on REPORT.TXT'
          L     R10,SVWRAP
          BR    R10
 ****************************************************************
@@ -205,7 +188,6 @@ OFFER    DCB   LRECL=16,RECFM=FT,MACRF=R,EODAD=ATEND,                  X
                DDNAME=OFFER,RECORD=IREC
 REPORT   DCB   LRECL=40,RECFM=FT,MACRF=W,                              X
                DDNAME=REPORT
-
 ****************************************************************
 *        RETURN ADDRESSES                                      *
 ****************************************************************
@@ -218,8 +200,8 @@ SVWRITE  DC    F'0'              WRITE
 SVWRAP   DC    F'0'              WRAPUP
 SVCHKLNS DC    F'0'              CHKLNS
 SVCHKSEM DC    F'0'              CHKSEM
-SVENDSEM DC    F'0'              ENDSEM
 SVCHKDEP DC    F'0'              CHKDEP
+SVENDSEM DC    F'0'              ENDSEM
 SVENDDEP DC    F'0'              ENDDEP
 ****************************************************************
 *        Miscellaneous field definitions                       *
@@ -228,12 +210,12 @@ EOFSW    DC    CL1'N'            End of file? (Y/N)
 PGS      DC    PL2'0'            Nbr of pages printed.
 LNS      DC    PL2'10'           Lines printed on this page.
 MAXLNS   DC    PL2'10'           Max nbr lines per page.
-HOLDSEM  DC    CL3' '            Hold semester
-#SEM     DC    PL2'0'            Sem count
-#DEPT    DC    PL2'0'            Department count
-HOLDDEPT DC    CL2' '            Hold department
 * My line counts exclude hdgs.
 BLANKS   DC    CL40' '
+HOLDSEM  DC    CL3' '            Hold semester
+HOLDDEPT DC    CL2' '            Hold department
+#SEM     DC    PL2'0'            Sem count
+#DEPT    DC    PL2'0'            Department count
 ****************************************************************
 *        Input record definition                               *
 ****************************************************************
@@ -246,32 +228,28 @@ ISECT    DS    CL1               9- 9 Section number
 ITID     DS    CL3               10-12 Teacher ID
 IROOM    DS    CL4               13-16 Room number
 ****************************************************************
-* Output (line) definition *
+*        Output (line) definition                              *
 ****************************************************************
 OREC     DS    0CL40             1-40
-         DC    CL10' '           1- 10
-OCID     DS    CL5               11-15 Course ID
-         DC    CL6' '            16-21
-OSECT    DS    CL1               22-22 Section number
-         DC    CL8' '            23-30
-OTID     DS    CL3               31-33 Teacher ID
-         DC    CL7' '            34-40
-* Headings definitions *
+         DC    CL10' '           1-10
+ODEPT    DS    CL2               11-12 Department
+         DC    CL7' '            13-19
+O#DEPT   DS    CL4               20-23 Number of sections
+         DC    CL17' '           24-40
+****************************************************************
+*        Headings definitions                                  *
 ****************************************************************
 *
 * ----+----1----+----2----+----3----+----4
 *           COURSE OFFERINGS      PageBZZ9
 *             Semester W92
 *
-*          Course   Section   Teacher
-*          ------   -------   -------
-*           XXXXX      X        XXX
-*           XXXXX      X        XXX
-*           XXXXX      X        XXX
-*
-*           Dept XX BZZ9 sections
-*
-*           Sem XXX BZZ9 sections
+*           Dept    Sections
+*          ------   --------
+*            XX       BZZ9
+*            XX       BZZ9
+*          ------   --------
+*           Total     BZZ9
 *
 FORMFEED DS    0CL40
 *         DC    X'0C' EBCDIC formfeed
@@ -282,11 +260,13 @@ HD1      DS    0CL40
          DC    CL36'          COURSE OFFERINGS      Page'
 HDPGS    DC    CL4'BZZ9'
 HD2      DS    0CL40
-         DC    CL22'            Semester '
+         DC    CL21'            Semester '
 HDSEM    DS    CL3'XXX'
          DC    CL15' '   
 HD3      DS    0CL40
-         DC    CL40'         Course   Section   Teacher '
+         DC    CL40' '
 HD4      DS    0CL40
-         DC    CL40'         ------   -------   ------- '
+         DC    CL40'          Dept    Sections              '
+HD5      DS    0CL40
+         DC    CL40'         ------   --------              '
          END   BEGIN

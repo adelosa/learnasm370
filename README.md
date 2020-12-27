@@ -64,12 +64,12 @@ You can now use the `asmlg.bat` or `asmlg.sh` scripts to assemble, link and run 
 IBM provides an extension to Visual Studio Code that supports the editing of HLASM assembly programs.
 I have found this editior very good and it works across Windows and MacOS.
 It also supports macro expansion and validation although this requires connection to a real mainframe 
-via Zowe. Even without this, its still a good editior experience.
+via Zowe. Even without this, it's still a good editior experience for assembly programming.
 
 You will need to update the IBM Z Open Editor extension config to recognise the file extensions used 
 by z390. They are .MLC for programs and .MAC for macros.
 
-I use the terminal within the editor to run the jobs to compile, link and run the program.
+I use the terminal/shell within the VSCode editor to run the jobs to compile, link and run the program.
 
 ## Differences between PC/370 vs z390
 
@@ -83,11 +83,11 @@ This is not difficult once you know what the differences are.
 
 The following section details where you will have issues with what is in the book and how to fix it using z390.
 
-### Replace macro `REGS` with `EQUREGS`
+### Replace macro `REGS` with `YREGS` or `EQUREGS`
 
-z390 does not have the REGS macro that provides mapping of registers to R codes.
+z390 does not have the `REGS` macro that provides mapping of registers to R codes.
 
-It does supply EQUREGS which provides the same functionality.
+It does supply `YREGS` which is almost the same and `EQUREGS` which maps all registers. Either will work.
 
 ### Replace macro `BEGIN` with `SUBENTRY`
 
@@ -151,6 +151,8 @@ In windows, you can set environment variables using the `SET` command.
 
     SET TEACHER=c:\teacher.dat
 
+Environment variables required for the programs has been included in the `asmlg` and `asmlga` commands.
+
 #### Removal of line ending/ASCII specific logic
 
 Because of the PC file handling support in z390, you can remove any instructions in the programs that deal with ASCII and line endings. 
@@ -181,22 +183,22 @@ does not fit into the output memory.
 If you just run the example, instead of getting to the `BO` (Branch overflow) instruction
 you will receive a S0CA abend which is a Decimal Overflow Exception.
 
-I am not sure why this behavior is different - it is possibly an enhancement to
-later versions of assembler/MVS. In any case, you will need to explicitly turn off
-the trap to mimic the behavior of the book.
+According to Melvyn Maltz, this is the IBM default as it is better to abend than get a false result, 
+especially if you don't check for an overflow. The Decimal Overflow Exception can be turned off with 
+the `SPM` instruction.
 
-I used the `ESPIE` macro to create an exit when a decimal overflow is encountered.
+The 2 additional instructions are required to stop the overflow abend.
+
+    SR  0,0         Clears register 0 (Subtract R0 from R0)
+    SPM 0           Sets the program mask to low values.
+
+See `pacdec2.mlc` module for an example of its usage. This is referenced in Chapter 16.9. _Retrieving and Setting the Program Mask_ in the John Ehrman book.
+
+Alternatively, you can use the `ESPIE` macro to create an exit when a decimal overflow is encountered.
 
 See https://www.ibm.com/support/knowledgecenter/SSLTBW_2.2.0/com.ibm.zos.v2r2.ieaa600/iea3a6_Using_the_ESPIE_macro.htm
 
-You can also refer to the `pacdec.mlc` module for an example of its usage as per the book.
-
-The macro seems to call the exit as a `BAS`, which means calling `RETURN` from the exit 
-will return you to the instruction immediatly after the overflow occured. 
-
-The bitmask for the branch is not set which means you cannot use the `BO` instruction. 
-I set a character flag in the exit to indicate an overflow has occured and then do a standard 
-branch based on its value (`CLC`).
+See `pacdec.mlc` module for an example of its usage.
 
 ## Other hints
 

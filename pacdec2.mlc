@@ -1,0 +1,33 @@
+         PRINT NOGEN
+****************************************************************
+*        FILENAME: PACDEC.MLC                                  *
+*        AUTHOR  : Bill Qualls/z390 adaption by Anthony Delosa *
+*        SYSTEM  : z390 v1703                                  *
+*        REMARKS : Trap packed dec overflow from Ch7 pg 7.7    *
+*                  Uses SPM set to low values to activate trap *
+*                  Thanks to Melvyn Maltz for the advice       *
+****************************************************************
+         START 0
+         YREGS
+BEGIN    SUBENTRY
+         WTO   'Packed decimal overflow test'
+         SR    R0,R0                Set R0 to low vals
+         SPM   R0                   Set program mask to R0 -- low vals
+         AP    C,=P'1'              Add 1 to C
+         BO    OVERFLOW             If overflow, goto Overflow
+         WTO   'No overflow'        console message
+         B     LOG                  goto LOG
+OVERFLOW EQU   *                    overflow exit
+         WTO   'Overflow detected'  .. console message
+LOG      UNPK  WTOTEXT(5),C         unpack C into WTOTEXT
+         MVZ   WTOTEXT+4(1),=X'F0'  reset sign (zone)
+         WTO   MF=(E,WTOBLOCK)      console message
+         RETURN
+         LTORG
+C        DC    PL3'99999'
+         DS    0H                   INSURE HALF-WORD ALIGNMENT
+WTOBLOCK EQU   *
+         DC    H'80'                For WTO, length of WTO buffer...
+         DC    H'0'                 should be binary zeroes...
+WTOTEXT  DC    CL76' '
+         END
