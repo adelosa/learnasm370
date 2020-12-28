@@ -115,6 +115,7 @@ If you want to display a part of memory, you will need to format a WTOBLOCK
              MVC   WTOTEXT(76),VALUE
              WTO   MF=(E,WTOBLOCK)
     ...
+             DS    0H            * Ensure HW address alignment
     WTOBLOCK EQU   *
              DC    H'80'         * For WTO, length of WTO buffer...
              DC    H'0'            should be binary zeroes...
@@ -151,7 +152,11 @@ In windows, you can set environment variables using the `SET` command.
 
     SET TEACHER=c:\teacher.dat
 
-Environment variables required for the programs has been included in the `asmlg` and `asmlga` commands.
+In a Mac/Unix like environment use the `export` command
+
+    export TEACHER=/home/teacher.dat
+
+Environment variables required for all the programs has been included in the `asmlg` and `asmlga` commands. 
 
 #### Removal of line ending/ASCII specific logic
 
@@ -187,8 +192,6 @@ According to Melvyn Maltz, this is the IBM default as it is better to abend than
 especially if you don't check for an overflow. The Decimal Overflow Exception can be turned off with 
 the `SPM` instruction.
 
-The 2 additional instructions are required to stop the overflow abend.
-
     SR  0,0         Clears register 0 (Subtract R0 from R0)
     SPM 0           Sets the program mask to low values.
 
@@ -204,3 +207,19 @@ See `pacdec.mlc` module for an example of its usage.
 
 * Keep your program file names to 8 characters. Otherwise, the assembler won't run your program.
 * You can find a guide to the z390 macros here - http://www.z390.org/z390_Macro_and_Copybook_Documentation_Index.pdf
+
+## Issues
+
+### `MP` - Multiply Packed
+
+In chapter 13, the `MP` Multiply Packed instruction is introduced.
+
+When working through exercises that look at the requirements on the receiving 
+field size, you will find that z390 does not abend when the field is too small
+according to the POP (Principals of operation). This issue has been raised 
+with the z390 team (Don) and hopefully there will be an update to address this issue.
+
+Program `mptest.mlc` should fail with a specification error but instead works.
+Use the ASSIST runner to execute this program:
+
+    asmlga.bat mptest

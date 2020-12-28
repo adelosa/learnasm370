@@ -1,0 +1,18 @@
+****************************************************************
+*        FILENAME: MPTEST.MLC                                  *
+*        AUTHOR  : John Ehrman                                 *
+*        SYSTEM  : z390 v1703                                  *
+*        REMARKS : Mainframe Assembly Programming/John Ehrman  *
+*                  Figure 299 + Assist display                 *
+****************************************************************
+MP       SUBENTRY
+         ZAP   R,MPCand                Move multiplicand
+         MP    R,=P'101'               Multiply by 100
+         MVC   Rprint(9),=X'402120202020202060'  Mask B9999999-
+         ED    Rprint(9),R
+         XPRNT Rprint,L'Rprint
+         RETURN
+MPCand   DC    PL4'0001234'            4-byte multiplicand
+R        DS    PL4                     Result must be 1 byte longer
+Rprint   DC    CL80' '
+         END

@@ -3,7 +3,11 @@
 * author : John Ehrman
 * desc   : Hello world from chapter 6.5 of book
 *          Assembler Language Programming for IBM System Z
-*          Servers 
+*          Servers
+*          z390 does not support all the features of the 
+*          John Ehrman macros supplied from his book.
+*          ASSIST instructions are used in its place.
+*          Run using ASSIST - asmlga or add "ASSIST" as param 
 *****************************************************************
 Test     Start 0                 First line of program Line 4
          Print NoGen             Line 5
