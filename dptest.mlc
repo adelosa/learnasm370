@@ -1,0 +1,23 @@
+DP2      SUBENTRY
+         MVC   X,=PL16'5006'
+         DP    X,Y
+         XDUMP X,L'X
+         MVC   PRNT(20),=C'Result   =[BZZZZZZZ]'
+         MVC   PRNT+11(L'MASK),MASK
+         ED    PRNT+11(L'MASK),XQUOT+4
+         XPRNT PRNT,L'PRNT
+         MVC   PRNT,SPACES
+         MVC   PRNT(20),=C'Remainder=[BZZZZZZZ]'
+         MVC   PRNT+11(L'MASK),MASK
+         ED    PRNT+11(L'MASK),XREM+4
+         XPRNT PRNT,L'PRNT
+         RETURN
+         LTORG
+Y        DC    PL8'5'
+X        DS    0PL16
+XQUOT    DS    PL8
+XREM     DS    PL8
+PRNT     DC    CL80' '
+SPACES   DC    CL80' '
+MASK     DC    X'4020202020202020'
+         END 

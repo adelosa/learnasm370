@@ -1,0 +1,19 @@
+         PRINT NOGEN
+*****************************************************************
+*        SRPTEST
+*        Play with the SRP instruction
+*        SHIFT AND ROUND PACKED
+*        Uses ASSIST instructions
+***************************************************************** 
+         START 0
+SRPTEST  SUBENTRY
+         SRP   FLDA,64-2,5
+         MVC   PRINT(L'MASK),MASK
+         ED    PRINT(L'MASK),FLDA
+         XPRNT PRINT,L'PRINT
+         RETURN
+         LTORG
+FLDA     DC    PL4'1278'
+MASK     DC    X'4020202020204B2020'
+PRINT    DC    CL80' '
+         END   SRPTEST
