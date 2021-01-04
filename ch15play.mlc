@@ -1,0 +1,66 @@
+         PRINT NOGEN
+*****************************************************************
+*        CH15SENT.MLC
+*        Sentinal controlled loop
+*        Run using ASSIST -- asmlga
+*****************************************************************
+         START 0
+         YREGS
+CH15PLAY SUBENTRY 
+         LA    R8,CNTTABLE       R8 POINTS TO FIRST ROW OF TABLE
+LOOP     EQU   *
+         MVC   ODESC,0(R8)       DESC COMES FROM WHERE R8 POINTS
+         MVC   OCOUNT,EDCOUNT    MOVE MASK PRIOR TO EDIT
+*         MVC   OCOUNT(6),EDCOUNT  Ex 2 MOVE MASK PRIOR TO EDIT
+         ED    OCOUNT,25(R8)     COUNT COMES FROM 25 BYTES PAST
+*         ED    OCOUNT(6),25(R8)   Ex 2 COUNT COMES FROM 25 BYTES PAST
+         PERFORM PRINT           WHERE R8 POINTS
+*         AH    R8,=H'29'         POINT TO NEXT ROW -- hardcode
+         AHI   R8,TBLLEN         Point to next row - calculated
+         CLI   0(R8),C'*'        IS FIRST BYTE AN ASTERISK?
+*         CLI   0(R8),X'FF'       Ex 1.1 IS FIRST BYTE X'FF'?   
+*         CLC   0(3,R8),=C'END'   Ex 1.2 DOES DESC start with END?
+         BNE   LOOP              NO - REPEAT UNTIL THEN 
+CH15PLYX RETURN
+*********************************************
+*        ASSIST print of OPRINT area
+*********************************************
+PRINT    PENTRY
+         XPRNT OPRINT,L'OPRINT
+         PEXIT
+         LTORG
+*********************************************
+*        A TABLE OF DESC,COUNT
+*********************************************
+CNTTABLE DS    0CL29
+*CNTTABLE DS    0CL28            Ex 2
+         DC    CL25'Transactions In'
+#TRANSIN DC    PL4'1'
+*#TRANSIN DC    PL3'1'           Ex 2
+         DC    CL25'Transactions Rejected'
+#REJECTS DC    PL4'2'
+*#REJECTS DC    PL3'2'           Ex 2
+         DC    CL25'Old Masters In'
+#OLDIN   DC    PL4'3'
+*#OLDIN   DC    PL3'3'           Ex 2
+         DC    CL25'Old Masters Deleted'
+#DELETED DC    PL4'4'
+*#DELETED DC    PL3'4'           Ex 2
+         DC    CL25'Old Masters Changed'
+#CHANGED DC    PL4'5'
+*#CHANGED DC    PL3'5'           Ex 2
+         DC    CL25'New Masters Added'
+#ADDED   DC    PL4'6'
+*#ADDED   DC    PL3'6'           Ex 2
+         DC    CL25'New Masters Out'
+#NEWOUT  DC    PL4'7'
+*#NEWOUT  DC    PL3'7'           Ex 2
+         DC    C'*'                        
+*         DC    X'FF'            Ex 1.1
+*         DC    C'END'           Ex 1.2
+EDCOUNT  DC    X'4020202020202020'
+OPRINT   DS    0CL33
+ODESC    DC    CL25' '
+OCOUNT   DC    CL8' '
+TBLLEN   EQU   L'CNTTABLE
+         END   CH15PLAY

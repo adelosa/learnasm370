@@ -208,7 +208,7 @@ See `pacdec.mlc` module for an example of its usage.
 * Keep your program file names to 8 characters. Otherwise, the assembler won't run your program.
 * You can find a guide to the z390 macros here - http://www.z390.org/z390_Macro_and_Copybook_Documentation_Index.pdf
 
-## Issues
+## z390 issues
 
 ### `MP` - Multiply Packed
 
@@ -223,3 +223,21 @@ Program `mptest.mlc` should fail with a specification error but instead works.
 Use the ASSIST runner to execute this program:
 
     asmlga.bat mptest
+
+## Other learning material
+
+The following site provided by Dr David Woolbright. There are some fantastic resources
+for learning assembler available here.
+
+https://punctiliousprogrammer.com/ibm-mainframe-assembler/
+https://punctiliousprogrammer.com/the-video-course/
+
+The John Ehrman Assembler language programming is available from this page
+
+http://zseries.marist.edu/enterprisesystemseducation/assemblerlanguageresources-1.html
+
+This is a very comprehensive guide to assembly programming created by the father of the 
+language, but can be daunting for the first time ASM programmer. My recomendation 
+is work though the Bill Qualls book but use the John Ehrman book for a closer look at 
+topics that confuse you. I found myself using it to get a deeper understanding of 
+particular topics of interest or specific instructions.  
