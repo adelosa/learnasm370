@@ -1,0 +1,20 @@
+         PRINT NOGEN
+         START 0
+         YREGS
+CH14EX7  SUBENTRY
+         LH    R3,FIVE
+         SH    R3,THREE
+         CVD   R3,WPDBL
+         ED    RESULT,WPDBL+6
+         WTO   MF=(E,WTOBLOCK)
+         RETURN
+         LTORG
+FIVE     DC    H'5'
+THREE    DC    H'3'
+WPDBL    DC    D'0'
+         DS    0H    
+WTOBLOCK EQU   *
+         DC    H'8'   LENGTH
+         DC    H'0'
+RESULT   DC    X'40202120'
+         END   CH14EX7

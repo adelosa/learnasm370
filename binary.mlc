@@ -1,0 +1,49 @@
+         PRINT NOGEN
+***************************************************************
+*        BINARY.MLC
+*        Playing with binary arithemetic as per Ch14
+***************************************************************
+         START 0
+         YREGS
+BINARY   SUBENTRY
+         L     R3,A     Load register FW
+         L     R4,B     
+         CR    R3,R4    Compare register
+         C     R3,B     Compare FW
+         ST    R3,A     Store R3 at A FW
+         LH    R3,C     Load register HW
+         LH    R4,D     
+         CR    R3,R4    Compare register
+         CH    R3,D     Compare HW
+         STH   R3,C     Store R3 at C HW
+* Move fullword to halfword A -> C
+         L     R3,A     Load A into R3
+         STH   R3,C     Store R3 in C
+* A + C + D = B
+         L     R3,A     Load A into R3
+         AH    R3,C     Add C to R3
+         AH    R3,D     Add D to R3
+         ST    R3,D     Store R3 in D
+* B = A - B - C
+         L     R3,A     Load A into R3
+         S     R3,B     Subtract B from R3
+         SH    R3,C     Subtract C from R3
+         ST    R3,B     Store R3 in B
+* Print B
+         CVD   R3,DBL   Convert from bin to Packed dec
+         XDUMP DBL,L'DBL
+         MVC   PRT(10),=X'40202020202020202020' BZZ,ZZ9.99     
+         ED    PRT(10),DBL+3
+         XPRNT PRT,L'PRT
+         RETURN
+         LTORG
+         DS    0F
+A        DC    X'00000005'
+B        DC    X'FFFFFFFB'
+C        DC    X'0002'
+D        DC    X'FFFE'
+DBL      DC    D'0'
+PRT      DC    CL80' '
+         END   BINARY
+
+
