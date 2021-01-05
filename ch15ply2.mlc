@@ -1,0 +1,74 @@
+         PRINT NOGEN
+*****************************************************************
+*        CH15PLY2.MLC
+*        Counter controlled loop
+*        Run using ASSIST -- asmlga
+*****************************************************************
+         START 0
+         YREGS
+CH15PLY1 SUBENTRY 
+         LA    R8,CNTTABLE          R8 POINTS TO FIRST ROW
+*         LH    R7,=H'7'            THERE ARE SEVEN ROWS
+*         LA    R7,7                 THERE ARE SEVEN ROWS
+*         LHI   R7,(CNTTBLX-CNTTABLE)/L'CNTTABLE
+         LA    R7,(CNTTBLX-CNTTABLE)/L'CNTTABLE
+         XDUMP         
+LOOP     EQU   *
+         MVC   ODESC,0(R8)          DESC COMES FROM WHERE R8 POINTS
+         MVC   OCOUNT,EDCOUNT       MOVE MASK PRIOR TO EDIT
+*         ED    OCOUNT,25(R8)        COUNT COMES FROM 25 BYTES PAST
+         ED    OCOUNT,25+1(R8)      COUNT COMES FROM 25B PAST - drop 1
+         PERFORM PRINT              WHERE R8 POINTS
+*         AH    R8,=H'29'           POINT TO NEXT ROW
+         LA    R8,L'CNTTABLE(R8)    POINT TO NEXT ROW
+*         SH    R7,=H'1'       SUBTRACT ONE FROM ROW COUNTER
+*         BH    LOOP           IF RESULT > ZERO THEN REPEAT
+         BCT   R7,LOOP              SUBTRACT 1 FROM ROW COUNTER
+*                                   IF RESULT > ZERO THEN REPEAT
+         RETURN
+*********************************************
+*        ASSIST print of OPRINT area
+*********************************************
+PRINT    PENTRY
+         XPRNT OPRINT,L'OPRINT
+         PEXIT
+         LTORG
+*********************************************
+*        A TABLE OF DESC,COUNT
+*********************************************
+*CNTTABLE DS    0CL29
+CNTTABLE DS    0CL30            Ex 2
+         DC    CL25'Transactions In'
+*#TRANSIN DC    PL4'1'
+#TRANSIN DC    PL5'1'           Ex 2
+         DC    CL25'Transactions Rejected'
+*#REJECTS DC    PL4'2'
+#REJECTS DC    PL5'2'           Ex 2
+         DC    CL25'Old Masters In'
+*#OLDIN   DC    PL4'3'
+#OLDIN   DC    PL5'3'           Ex 2
+         DC    CL25'Old Masters Deleted'
+*#DELETED DC    PL4'4'
+#DELETED DC    PL5'4'           Ex 2
+         DC    CL25'Old Masters Changed'
+*#CHANGED DC    PL4'5'
+#CHANGED DC    PL5'5'           Ex 2
+         DC    CL25'New Masters Added'
+*#ADDED   DC    PL4'6'
+#ADDED   DC    PL5'6'           Ex 2
+         DC    CL25'New Masters Out'
+*#NEWOUT  DC    PL4'7'
+#NEWOUT   DC    PL5'7'           Ex 2
+         DC    CL25'Transactions used'
+*#TRANSOK DC    PL4'8'
+#TRANSOK   DC    PL5'8'           Ex 2
+CNTTBLX  EQU   *              END OF TABLE
+*#NEWOUT  DC    PL3'7'           Ex 2
+*         DC    X'FF'            Ex 1.1
+*         DC    C'END'           Ex 1.2
+EDCOUNT  DC    X'4020202020202020'
+OPRINT   DS    0CL33
+ODESC    DC    CL25' '
+OCOUNT   DC    CL8' '
+TBLLEN   EQU   L'CNTTABLE
+         END   CH15PLY1
