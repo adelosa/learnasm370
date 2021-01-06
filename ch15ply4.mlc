@@ -1,0 +1,55 @@
+**********************************************************
+*        Text manipulation in asm
+*        Input : BENSON, E.T. PHD
+*        Output: DR. BENSON
+*        Title rules -- If PHD, then DR. else PROF.
+*        R3 used as pointer to output text
+*        R4 used as pointer to input name
+**********************************************************
+         PRINT NOGEN
+         START 0
+         YREGS
+CH15PLY4 SUBENTRY
+* Start with moving the title based on the degree value
+         MVC   ONAME,=CL25' '          Clear ONAME
+         LA    R3,ONAME                Load output pointer addr
+         CLC   IDEGREE,=C'PHD'         If IDEGREE != PHD
+         BNE   PROCDOC                 GOTO PROCDOC
+*         MVC   ONAME(3),=C'DR.'        Move DR. to output
+         MVC   0(3,R3),=C'DR.'         Move DR. to output pointer
+*  0(3,R3) = Explicit: D(L, B) where D=Displ,L=Length,B=Base register
+         LA    R3,4(R3)                Move output pointer forward 3
+         B     PROCDOCX                GOTO PROCDOCX
+PROCDOC  EQU   *
+         MVC   0(5,R3),=C'PROF.'       Move PROF. to output pointer
+         LA    R3,6(R3)                Move output pointer forward 6
+PROCDOCX EQU   *
+*         XDUMP
+* Now move all chars in name to output until you get a comma
+         LA    R4,INAME                Load input name pointer addr
+         LA    R5,L'INAME              Load length of input name R5
+         XDUMP
+NEXTCHAR EQU   *     
+         CLI   0(R4),C','              If char at input pointer is ,
+         BE    NAMEEND                 GOTO NAMEEND
+         MVC   0(1,R3),0(R4)           Move input char to output
+*         AHI   R3,1                    Increment output pointer by 1
+         LA    R3,1(R3)                Increment output pointer by 1
+*         AHI   R4,1                    Increment input pointer by 1
+         LA    R4,1(R4)                Increment input pointer by 1
+         BCT   R5,NEXTCHAR             Repeat until end of data
+NAMEEND  EQU   *
+         XDUMP
+         XPRNT OAREA,L'OAREA
+         RETURN
+         LTORG
+******** INPUT ****************************************************
+IDETAILS DS    0CL25
+INAME    DC    CL20'BENSONSON, E.T.     '
+IDEGREE  DC    C'PHD'
+********* OUTPUT **************************************************
+OAREA    DS    0CL27
+         DC    C'<'
+ONAME    DS    CL25' '
+         DC    C'>'
+         END   CH15PLY4
