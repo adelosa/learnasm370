@@ -1,0 +1,33 @@
+         PRINT NOGEN
+****************************************************************
+*        ch16binm  -- chapter 16 binary multiply/divide        *
+*        Includes ASSIST instructions. Use asmlga              *
+****************************************************************
+         START 0
+         YREGS
+BEGIN    SUBENTRY
+         L     R9,SUM
+         WTO   'Load 214 to R9'
+         XDUMP
+         M     R8,=F'1'
+         WTO   'Multiply R8 by 1'
+         XDUMP
+         D     R8,COUNT
+         WTO   'Divide R8 by 8'
+         XDUMP
+         CVD   R9,DBLWORD
+         WTO   'CVD Move to doubleword'
+         XDUMP
+         SRP   DBLWORD,64-1,5
+         WTO   'SRP round'
+         XDUMP
+         ZAP   AVG,DBLWORD
+         WTO   'ZAP to AVG'
+         XDUMP
+         RETURN
+         LTORG
+DBLWORD  DS    D
+SUM      DC    F'214'
+COUNT    DC    F'8'
+AVG      DC    PL3'0'
+         END   BEGIN
