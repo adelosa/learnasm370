@@ -104,7 +104,7 @@ WRAPUP   EQU   *
          ST    R10,SVWRAP
          CLOSE INVENTRY
          CLOSE BINARY
-         WTO   'COGS14A ... Binary file COGS.BIN created.'
+         WTO   'COGS14A ... Binary file COGSBIN.DAT created.'
          ED    MSG#OUT,#OUT
          WTO   MF=(E,WTOBLOCK)
          L     R10,SVWRAP
@@ -119,7 +119,7 @@ WRAPUP   EQU   *
 INVENTRY DCB   LRECL=39,RECFM=FT,MACRF=R,EODAD=ATEND,                  X
                DDNAME=INVENTRY,RECORD=IREC
 BINARY   DCB   LRECL=28,RECFM=F,MACRF=W,                               X
-               DDNAME=REPORT
+               DDNAME=INVNTBIN
 ****************************************************************
 *        RETURN ADDRESSES                                      *
 ****************************************************************
