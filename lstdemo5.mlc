@@ -1,0 +1,10 @@
+         START 0
+ENTRY    BASR  15,0         
+         USING *,15
+         ICM   10,B'1111',=X'AABBCCDD'         
+         STCM  10,B'0101',AA
+         XDUMP 0            Dump memory
+         BR    14           Branch to R14 address (return)
+         DS    0F
+AA       DC    X'01020304'
+         END

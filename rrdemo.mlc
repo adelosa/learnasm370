@@ -1,0 +1,7 @@
+         csect
+         YREGS
+         xdump 0      dump memory  
+         SGR   R10,R10  clear r10
+         xdump 0      dump memory  
+         br    14     exit
+         end         

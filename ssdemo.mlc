@@ -1,0 +1,14 @@
+         csect
+         BASR  15,0               
+         using *,15
+         mvc   field1,=c'ABCDEFGH'
+         xdump 0
+         mvc   field1,=cl8' '
+         mvc   field1(4),=c'ABCDEFGH'
+         xdump 0  
+         br    14
+         ds    
+         dc    8c'*'
+field1   ds    cl8
+         dc    8c'*'
+         end         

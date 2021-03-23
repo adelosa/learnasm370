@@ -1,0 +1,12 @@
+         START 0
+ENTRY    BASR  15,0         Load address of next inst in R15
+         IC    10,EIGHT(,15)  Load char to R10   
+         XDUMP 0            Dump memory
+         BR    14           Branch to R14 address (return)
+         DS    0F
+NUMS     DC    CL8'12345678'
+DISPLACE EQU   NUMS-(ENTRY+L'ENTRY)
+ONE      EQU   DISPLACE
+TWO      EQU   DISPLACE+1
+EIGHT    EQU   DISPLACE+7
+         END

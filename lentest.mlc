@@ -1,0 +1,9 @@
+lentest  subentry
+         xdump
+         RETURN
+         dc    0f
+         dc    8c'*'
+val      dc    2xl4'1cab'
+len      equ   l'val         
+         dc    8c'*'
+         end

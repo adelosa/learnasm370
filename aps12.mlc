@@ -1,0 +1,13 @@
+         PRINT
+         START 0
+BEGIN    SUBENTRY
+         XDUMP 
+         RETURN
+STRING   DC    C'****'
+STRLEN   EQU   L'STRING
+         DS    0F
+         DC    C'>!!>'
+*VAL1     DC    A(X'213'+C'*'-B'11')
+VAL1     DC    Y(L'STRING)
+         DC    C'<!!<'
+         END

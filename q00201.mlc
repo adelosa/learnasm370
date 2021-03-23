@@ -1,0 +1,18 @@
+***********************************************************************
+*  002: Defining data quiz question
+*       The self defining term 3CL4'ABCD' will create the following
+*       C'ABCABCABCABC'
+*       C'ABCDABCDABCD'
+*       C'A___A___A___'
+*       C'AAAABBBBCCCC'
+***********************************************************************
+         START 0
+ENTRY    BASR  15,0        Establish a base register R15
+         USING *,15        Inform the assembler
+         XDUMP             
+         BR    14          Branch to R14 address (return)
+         DS    0F
+         DC    CL8'********'
+QUIZDC   DC    3CL4'ABCD'
+         DC    CL8'********'
+         END

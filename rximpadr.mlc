@@ -1,0 +1,10 @@
+         START 0
+ENTRY    BASR  15,0         Load address of next inst in R15
+         USING *,15         Tell assembler base to use
+         IC    10,NUMS      Load char to R10   
+         XDUMP 0            Dump memory
+         BR    14           Branch to R14 address (return)
+         DS    0F
+         DS    F
+NUMS     DC    CL8'12345678'
+         END

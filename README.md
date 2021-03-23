@@ -44,20 +44,33 @@ Use a location where you normally work on code.
 
     git clone https://github.com/adelosa/learnasm370.git
 
+If you don't have Git installed, then you can download the repository and expand.
+
+https://github.com/adelosa/learnasm370/archive/master.zip
+
 ### Config and run!
 
-Open the newly cloned folder in your coding editor (see below for VSCode setup)
+Change directory into the newly cloned or downloaded zip folder.
 
 * For Windows, edit the `asmlg.bat` and change the variable `z390_dir` to point to your z390 installation folder.
-* For MACOS, create a symbolic link in your path to the `perl/z390.pl` script in your z390 install folder. The link should be called z390. 
+* For MacOS, create a symbolic link in your path to the `perl/z390.pl` script in your z390 install folder. The link should be called z390. 
 
     `ln -s ~/lib/z390/perl/z390.pl ~/bin/z390`
 
-You can now use the `asmlg.bat` or `asmlg.sh` scripts to assemble, link and run the assembler programs.
+You can now use the `asmlg.bat` or `asmlg.sh` scripts to assemble, link and run the assembler programs in this repository.
+
+To test the install, try the following command
 
     win>   asmlg.bat hello.mlc
 
     macos> ./asmlg.sh hello.mlc
+
+In the output, you should see a log of the hello.mlc program and the text "Hello World!" will appear.
+
+    ...
+    13:53:48 hello     EZ390 START USING z390 V1.7.03 ON J2SE 15.0.1 01/25/21
+    Hello world!
+    13:53:48 hello     EZ390 ENDED   RC= 0 SEC= 0 MEM(MB)= 17 IO=21 INS=10
 
 ## Using Visual Studio code with IBM Z Open Editor
 
@@ -229,8 +242,8 @@ Use the ASSIST runner to execute this program:
 The following site provided by Dr David Woolbright. There are some fantastic resources
 for learning assembler available here.
 
-https://punctiliousprogrammer.com/ibm-mainframe-assembler/
-https://punctiliousprogrammer.com/the-video-course/
+* https://punctiliousprogrammer.com/ibm-mainframe-assembler/
+* https://punctiliousprogrammer.com/the-video-course/
 
 The John Ehrman Assembler language programming is available from this page
 

@@ -1,0 +1,11 @@
+         CSECT
+         BALR  15,0
+         USING *,15
+         MVI   CHARS,C'X'
+         XDUMP 0
+         BR    14
+         DS    0F
+         DC    4C'*'
+CHARS    DC    C' '
+         DC    4C'*'
+         END

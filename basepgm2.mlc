@@ -1,0 +1,15 @@
+ENTRY    SUBENTRY
+         XDUMP
+         RETURN
+         DC    0F
+         DC    8C'*'
+         DC    H'8'
+         DC    H'8'
+         DC    F'8'
+         DC    C'/'
+         DC    X'61'
+         DC    B'01100001'
+         DC    P'-7777'
+         DC    Z'-8888'
+         DC    8C'*'
+         END

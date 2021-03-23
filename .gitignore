@@ -11,3 +11,4 @@
 *.XPH
 *.XGT
 *.XPT
+venv/

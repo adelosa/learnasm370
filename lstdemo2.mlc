@@ -1,0 +1,15 @@
+         CSECT
+         BALR  15,0
+         USING *,15
+         LM    8,10,Loaddat  Storage to R8,R9,R10
+         STM   8,10,Stordat  R8,R9,R10 to storage
+         XDUMP 0
+         BR    14
+         DS    0F
+         DC    C'LOAD----'
+Loaddat  DC    F'1'
+         DC    F'2'
+         DC    F'3'
+         DC    C'STORE---'
+Stordat  DC    3F'0'
+         END
