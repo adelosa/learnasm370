@@ -1,0 +1,13 @@
+cvd      CSECT
+         BASR  15,0
+         USING *,15
+         LA    5,21  Load d21 into R5
+         XDUMP 0
+         CVD   5,number  Convert to number in storage 
+         XDUMP 0
+         BR    14
+         DS    0F
+         DC    C'>>>>'
+number   DC    PL8'0'
+         DC    C'<<<<'
+         END

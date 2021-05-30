@@ -1,0 +1,10 @@
+         CSECT
+         BASR  15,0
+         USING *,15
+         LA    10,LOC2
+         XDUMP 0
+         BR    14
+LOC1     DC    24CL'1'
+LOC2     DC    8CL'2'
+LOC3     DC    16CL'3'
+         END

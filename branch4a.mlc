@@ -1,0 +1,10 @@
+branch4a csect
+         basr  15,0
+         using *,15
+         cli   val,x'AA' Sets CC
+test1101 brc   b'1101',mtch1101  
+         brc   b'1111',end
+mtch1101 xprnt =c'cc=0,1,3',8
+end      br    14
+val      dc    x'AA'
+         end

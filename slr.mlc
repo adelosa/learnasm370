@@ -1,0 +1,11 @@
+         CSECT
+         YREGS
+         BASR  R15,0
+         USING *,R15
+         LA    R1,5   Load 5 into R1
+         LA    R2,2   Load 2 into R2
+         XDUMP 0
+         SLR   R1,R2  Subtract R2 from R1
+         XDUMP 0
+         BR    R14
+         END

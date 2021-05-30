@@ -1,0 +1,10 @@
+         CSECT
+         YREGS
+         BASR  R15,0
+         USING *,R15
+         LA    R1,1   Load 1 into R1
+         LA    R2,2   Load 2 into R2
+         AR    R1,R2  Add R2 to R1
+         XDUMP 0
+         BR    R14
+         END

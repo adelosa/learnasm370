@@ -1,0 +1,26 @@
+         CSECT
+         BASR  15,0
+         USING *,15
+         LM    2,3,=F'1,0'    c(GR2)=1, c(GR3)=0, CC not set
+         LTR   2,2            c(GR2)=1, CC=2 Positive
+         LR    7,3            c(GR7)=0, CC not set
+*         LNR   1,3            c(GR1)=0, CC=0 Zero
+*         LCR   4,2            c(GR4)=-1, CC=1 Negative
+*         LPR   0,4            c(GR0)=+1, CC=2 Positive
+*         LNR   5,2            c(GR5)=-1, CC=1
+         BC    B'1000',BRANCH0  IF CC=0 (8)
+         BC    B'0100',BRANCH1  IF CC=1 (4)
+         BC    B'0010',BRANCH2  IF CC=2 (2)
+         BC    B'0001',BRANCH3  IF CC=3 (1)
+NOBRANCH XPRNT =C'NO BRANCH',9
+         B     END
+BRANCH0  XPRNT =C'CC=0',4
+         B     END
+BRANCH1  XPRNT =C'CC=1',4
+         B     END
+BRANCH2  XPRNT =C'CC=2',4
+         B     END
+BRANCH3  XPRNT =C'CC=3',4
+END      XDUMP 0
+         BR    14
+         END

@@ -1,0 +1,14 @@
+         CSECT
+         YREGS
+         BASR  15,0
+         USING *,15
+         LA    R5,3  # Init count to 3
+LOOP     XDECO R5,count
+         XPRNT count,L'count
+         S     R5,=F'1'
+         JNZ   LOOP
+         BR    14    # End prog
+count    DC    CL12' '
+         END
+
+ 

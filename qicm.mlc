@@ -1,0 +1,16 @@
+***********************************************************************
+*  ICM Question
+***********************************************************************
+         CSECT
+ENTRY    BASR  15,0        Establish a base register R15
+         USING *,15        Inform the assembler
+         SR    10,10       Clear R10
+*         ICM   10,B'0011',VARS
+*         L     10,VARS
+         LH    10,VARS
+*         IC    10,VARS
+         XDUMP 0            
+         BR    14          Branch to R14 address (return)
+         DS    0F
+VARS     DC    X'AABBCCDD'
+         END   

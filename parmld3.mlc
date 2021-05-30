@@ -1,0 +1,34 @@
+PARMLD3  CSECT
+         YREGS
+         BASR  15,0
+         USING *,15
+*------- R1=Address of Parm Address (from PARM)
+         XHEXO R1,PRINT         Address of parm address
+         XPRNT PRINT,12
+*------- R2=Parm Address
+         L     R2,0(,R1)        R2=address of parm length(HW)+value
+         XHEXO R2,PRINT         Address of parm structure
+         XPRNT PRINT,12
+*------- Use DSECT to map parm area
+         USING PARMDS,R2        Map R2 address to PARMDS DSECT
+*------- R3=Length of parm
+         LH    R3,PARMLEN       R3=length of parm value
+         XDECO R3,PRINT
+         XPRNT PRINT,12       
+*------- Move to parm
+*         XGR   R0,R0           Set R0 to zero (for MVCOS instruction)
+*         MVCOS PARM,PARMV,R3   Move R3 bytes at PARMV to PARM
+         BCTR  R3,0             Subtract 1 from R3 - length code
+         EX    R3,MOVE          Move using length code in R3
+         XPRNT PARM,50
+         BR    14
+         DS    0F
+PRINT    DC    CL12' '
+MOVE     MVC   PARM(0),PARMV
+PARM     DC    50C'#'
+
+PARMDS   DSECT 
+PARMLEN  DC    H    
+PARMV    DC    CL50' '
+PARMDSL  EQU   *-PARMDS
+         END

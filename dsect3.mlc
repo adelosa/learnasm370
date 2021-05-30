@@ -1,0 +1,21 @@
+DSECT3   CSECT
+         BASR  15,0
+         USING *,15
+         LA    10,DATA1
+         USING STAFF,10
+         USING NMBREAK,SURNAME
+         XPRNT DATA1,4
+         XPRNT SURNAME,L'SURNAME
+         XPRNT FIRST5,L'FIRST5
+         BR    14
+         DS    0F
+DATA1    DC    C'DELOSA    ANTHONY   JAN1970'
+STAFF    DSECT ,
+SURNAME  DS    CL10
+FNAME    DS    CL10
+MONTH    DS    CL3
+YEAR     DS    CL4
+NMBREAK  DSECT ,
+FIRST5   DS    CL5
+LAST5    DS    CL5
+         END

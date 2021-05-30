@@ -1,0 +1,17 @@
+ltr      CSECT
+         YREGS
+         BASR  R15,0
+         USING *,R15
+         LA    R2,0   Load 0 into R1
+*         L     R2,=F'-1'
+         XDUMP 0
+         LTR   R1,R2  Load R2 into R1 and test R1
+         JH    GTZERO
+         JL    LTZERO
+ZERO     XPRNT =C'ZERO',4
+         BR    R14
+LTZERO   XPRNT =C'LT ZERO',7
+         BR    R14
+GTZERO   XPRNT =C'GT ZERO',7
+         BR    R14
+         END

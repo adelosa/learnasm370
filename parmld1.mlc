@@ -1,0 +1,25 @@
+PARMLD1  CSECT
+         YREGS
+         BASR  15,0
+         USING *,15             Set base register
+*------- R1=Address of Parm Address (from PARM)
+         XHEXO R1,PRINT         
+         XPRNT PRINT,12
+*------- R2=Parm Address
+         L     R2,0(,R1)        R2=address of parm length(HW)+value
+         XHEXO R2,PRINT         
+         XPRNT PRINT,12
+*------- R3=Length of parm
+         LH    R3,0(,R2)        R3=length of parm value
+         XDECO R3,PRINT
+         XPRNT PRINT,12       
+*------- Move to parm
+         XGR   R0,R0            Set R0 to zero (for MVCOS instruction)
+         MVCOS PARM,2(R2),R3    Move R3 bytes at 2(R2) to PARM
+         XPRNT PARM,50
+*         XDUMP 0
+         BR    14
+         DS    0F
+PRINT    DC    CL12' '
+PARM     DC    50C'#'
+         END

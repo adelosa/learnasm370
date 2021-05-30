@@ -1,5 +1,5 @@
          CSECT
-         BALR  15,0
+         BASR  15,0
          USING *,15
          LH    10,=H'123'  d123=x7b
          STH   10,RESULT

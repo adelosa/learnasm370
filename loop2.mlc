@@ -1,0 +1,13 @@
+         CSECT
+         YREGS
+         BASR  15,0
+         USING *,15
+         LA    R5,3  # R5=3
+LOOP     XDECO R5,count
+         XPRNT count,L'count
+         BRCT  R5,LOOP
+         BR    14    # End prog
+count    DC    CL12' '
+         END
+
+ 

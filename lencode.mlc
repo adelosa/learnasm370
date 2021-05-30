@@ -1,0 +1,9 @@
+lencode  CSECT
+         BASR  15,0
+         USING *,15
+         MVC   STR2(5),=C'WORLD'
+         BR    14
+         DS    0F
+STR1     DC    C'HELLO '
+STR2     DC    C'xxxxx'
+         END

@@ -1,0 +1,17 @@
+dsect1   CSECT
+         BASR  15,0
+         USING *,15
+         LA    10,DATA
+         USING STAFF,10
+         XPRNT DATA,4
+         XPRNT SURNAME,L'SURNAME
+         XPRNT YEAR,L'YEAR
+         BR    14
+         DS    0F
+DATA     DC    C'DELOSA    ANTHONY   JAN1973'
+STAFF    DSECT ,
+SURNAME  DS    CL10
+FNAME    DS    CL10
+MONTH    DS    CL3
+YEAR     DS    CL4
+         END

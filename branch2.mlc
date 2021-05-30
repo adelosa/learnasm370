@@ -1,0 +1,10 @@
+branch2  csect
+         basr  15,0
+         using *,15
+         cli   val,x'AA'         Sets CC
+test1101 bc    b'1101',mtch1101  Check is cc=0,1,3 (bit 8+4+1)
+         bc    b'1111',end       Unconditional branch
+mtch1101 xprnt =c'cc=0,1,3',8
+end      br    14
+val      dc    x'AB'
+         end

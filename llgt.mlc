@@ -1,10 +1,9 @@
-         CSECT
+llgt     CSECT
          BASR  15,0
          USING *,15
-         L     10,=F'123'  d123=x7b
-         ST    10,RESULT
+         LLGT  5,HIWORD
          XDUMP 0
          BR    14
          DS    0F
-RESULT   DC    F'0'
+HIWORD   DC    X'FFFFFFFF'
          END
