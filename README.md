@@ -75,11 +75,11 @@ In the output, you should see a log of the hello.mlc program and the text "Hello
 ## Using Visual Studio code with IBM Z Open Editor
 
 IBM provides an extension to Visual Studio Code that supports the editing of HLASM assembly programs.
-I have found this editior very good and it works across Windows and MacOS.
+I have found this editor very good and it works across Windows and MacOS.
 It also supports macro expansion and validation although this requires connection to a real mainframe 
-via Zowe. Even without this, it's still a good editior experience for assembly programming.
+via Zowe. Even without this, it's still a good editor experience for assembly programming.
 
-You will need to update the IBM Z Open Editor extension config to recognise the file extensions used 
+You will need to update the IBM Z Open Editor extension config to recognize the file extensions used 
 by z390. They are .MLC for programs and .MAC for macros.
 
 I use the terminal/shell within the VSCode editor to run the jobs to compile, link and run the program.
@@ -250,7 +250,9 @@ The John Ehrman Assembler language programming is available from this page
 http://zseries.marist.edu/enterprisesystemseducation/assemblerlanguageresources-1.html
 
 This is a very comprehensive guide to assembly programming created by the father of the 
-language, but can be daunting for the first time ASM programmer. My recomendation 
+language, but can be daunting for the first time ASM programmer. My recommendation 
 is work though the Bill Qualls book but use the John Ehrman book for a closer look at 
 topics that confuse you. I found myself using it to get a deeper understanding of 
-particular topics of interest or specific instructions.  
+particular topics of interest or specific instructions.
+
+
