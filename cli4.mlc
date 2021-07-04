@@ -1,0 +1,10 @@
+cli4     csect
+         basr  15,0
+         using *,15
+         cli   val,c'Y'   Sets CC
+         je    match      Check is cc=0 (bit 8)
+         j     exit       Unconditional branch
+match    xprnt =c'val=Y',5
+exit     br    14
+val      dc    C'Y'
+         end

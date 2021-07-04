@@ -12,3 +12,4 @@
 *.XGT
 *.XPT
 venv/
+.idea/

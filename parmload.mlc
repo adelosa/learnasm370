@@ -1,0 +1,20 @@
+         PRINT NOGEN
+         CSECT
+         YREGS
+BEGIN    BASR  15,0
+         USING *,15
+         XDUMP 0
+         L     R2,0(,R1)     R2=address of parm length(HW)+value
+         LH    R3,0(,R2)     R3=length of parm value
+*         XGR   R0,R0         Set R0 to zero (for MVCOS)
+*         MVCOS PARM,2(R2),R3 Get the PARM
+         BCTR  R3,0          Convert length to length code
+         EX    R3,MOVE       Copy parm to work area
+         XPRNT PARM,32
+         XDUMP 0
+         BR    14
+         DS    0F
+MOVE     MVC   PARM(0),2(R2)   Executed instruction
+         DC    C'>>>>'
+PARM     DC    CL32' '
+         END

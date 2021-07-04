@@ -1,0 +1,16 @@
+tstxdeci CSECT 
+         BASR  15,0
+         USING *,15
+         SR    5,5   Clear R5
+         XDECI 5,DECNUM
+         BRC   b'1000',OK
+         BRC   b'0001',ERR
+         J     DUMP
+OK       XPRNT =C'CC=0 OK',7
+         J     DUMP
+ERR      XPRNT =C'CC=3 ERR',8
+DUMP     XDUMP 0
+         BR    14
+         DS    0F
+DECNUM   DC    X'F1F2F3F4'
+         END

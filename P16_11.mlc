@@ -1,0 +1,11 @@
+P16_11   CSect ,
+         Using *,12
+         LR    12,15
+         A     15,X
+         BASR  12,15
+X        DC    F'18'
+         DC    F'4'
+Exit     BR    14
+         L     10,X-4
+         B     X-4(10)
+         End   P16_11
